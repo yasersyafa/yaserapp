@@ -1,0 +1,78 @@
+---
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import NavBar from '../components/NavBar.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../site.config';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  current?: string;
+}
+
+const {
+  title,
+  description = site.description,
+  ogImage = '/og-default.png',
+  current,
+} = Astro.props;
+
+const fullTitle = title ? `${title} — ${site.title}` : `${site.title} — ${site.tagline}`;
+const canonical = new URL(Astro.url.pathname, site.url).toString();
+const ogImageUrl = new URL(ogImage, site.url).toString();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="application/rss+xml" title={`${site.title} — Devlog`} href="/rss.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:site_name" content={site.title} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0B0B0E" media="(prefers-color-scheme: dark)" />
+
+    <ClientRouter />
+    <slot name="head" />
+
+    <script is:inline>
+      (function () {
+        const k = 'yaser-theme';
+        const v = localStorage.getItem(k);
+        if (v === 'dark' || v === 'light') document.documentElement.dataset.theme = v;
+      })();
+    </script>
+  </head>
+  <body class="min-h-dvh flex flex-col">
+    <NavBar current={current} />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      import '../scripts/motion.ts';
+    </script>
+  </body>
+</html>

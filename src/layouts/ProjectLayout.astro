@@ -1,0 +1,135 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import JsonLd from '../components/JsonLd.astro';
+import StarSection from '../components/StarSection.astro';
+import { site } from '../site.config';
+
+interface StarStep {
+  body: string;
+  points: string[];
+}
+interface ResultStep extends StarStep {
+  metrics: { label: string; value: string }[];
+}
+
+interface Props {
+  title: string;
+  dek: string;
+  type: 'game' | 'tool' | 'web' | 'jam';
+  year: number;
+  role: string;
+  engine?: string;
+  languages: string[];
+  duration?: string;
+  players?: string;
+  press: { label: string; url: string }[];
+  hero: string;
+  heroAlt: string;
+  tags: string[];
+  links: { play?: string; source?: string; itch?: string; steam?: string };
+  star: { situation: StarStep; task: StarStep; action: StarStep; result: ResultStep };
+  slug: string;
+}
+
+const p = Astro.props;
+const url = new URL(`/projects/${p.slug}/`, site.url).toString();
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': p.type === 'game' || p.type === 'jam' ? 'VideoGame' : 'CreativeWork',
+  name: p.title,
+  description: p.dek,
+  author: { '@type': 'Person', name: site.author.name, url: site.url },
+  datePublished: `${p.year}-01-01`,
+  url,
+  image: new URL(p.hero, site.url).toString(),
+  ...(p.type === 'game' || p.type === 'jam'
+    ? { gamePlatform: 'Web', genre: 'Indie' }
+    : {}),
+};
+---
+
+<BaseLayout title={p.title} description={p.dek} ogImage={p.hero} current="Projects">
+  <JsonLd slot="head" data={jsonLd} />
+
+  <article class="max-w-5xl mx-auto px-5 sm:px-6 pt-12 sm:pt-16 pb-16 sm:pb-20">
+    <a href="/projects/" class="link mono text-sm text-(--muted)">← projects</a>
+
+    <header class="mt-8 sm:mt-10">
+      <p class="mono text-[10px] sm:text-xs uppercase tracking-[0.3em] text-(--muted) reveal">
+        {p.type}{p.engine && <> · {p.engine}</>}{p.languages.length > 0 && <> · {p.languages.join(', ')}</>} · {p.year}
+      </p>
+      <h1 class="display text-4xl sm:text-7xl mt-4 reveal" transition:name="page-title">{p.title}</h1>
+      <p class="text-lg sm:text-2xl mt-5 sm:mt-6 max-w-3xl text-(--muted) reveal">{p.dek}</p>
+
+      <div class="flex flex-wrap gap-2 sm:gap-3 mt-6 sm:mt-8 reveal">
+        {p.links.play && <a href={p.links.play} class="btn btn-primary magnet" data-magnet="0.2">▶ play</a>}
+        {p.links.source && <a href={p.links.source} class="btn magnet" data-magnet="0.2">source</a>}
+        {p.links.itch && <a href={p.links.itch} class="btn magnet" data-magnet="0.2">itch.io ↗</a>}
+        {p.links.steam && <a href={p.links.steam} class="btn magnet" data-magnet="0.2">steam ↗</a>}
+      </div>
+    </header>
+
+    <figure class="mt-8 sm:mt-12 overflow-hidden rounded-2xl border border-(--line) reveal">
+      <img src={p.hero} alt={p.heroAlt} class="w-full h-auto" />
+    </figure>
+
+    <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-10 sm:gap-12 mt-10 sm:mt-16">
+      <div>
+        <header class="mb-8 sm:mb-12 reveal">
+          <p class="mono text-[10px] sm:text-xs uppercase tracking-[0.3em] text-(--muted)">Case study · STAR</p>
+          <h2 class="display text-3xl sm:text-4xl mt-3">The story</h2>
+        </header>
+
+        <StarSection letter="S" label="Situation" body={p.star.situation.body} points={p.star.situation.points} />
+        <StarSection letter="T" label="Task" body={p.star.task.body} points={p.star.task.points} />
+        <StarSection letter="A" label="Action" body={p.star.action.body} points={p.star.action.points} />
+        <StarSection letter="R" label="Result" body={p.star.result.body} points={p.star.result.points} accent={true} last={true}>
+          {p.star.result.metrics.length > 0 && (
+            <dl class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-2xl">
+              {p.star.result.metrics.map((m) => (
+                <div class="rounded-xl border border-(--line) p-3 sm:p-4 hover:border-(--fg) transition-colors">
+                  <dt class="mono text-[10px] uppercase tracking-widest text-(--muted)">{m.label}</dt>
+                  <dd class="display text-2xl sm:text-3xl mt-1 text-(--accent)">{m.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+        </StarSection>
+
+        <div class="prose-pixel max-w-none mt-8 [&_h2]:display [&_h2]:text-3xl [&_h2]:mt-12 [&_h2]:mb-4 [&_p]:my-5 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-5 [&_li]:my-2 [&_a]:link [&_a]:text-(--fg)">
+          <slot />
+        </div>
+      </div>
+
+      <aside class="mono text-sm lg:sticky lg:top-24 lg:self-start">
+        <h2 class="display text-2xl mb-4">Facts</h2>
+        <dl class="grid grid-cols-[6rem_1fr] gap-x-4 gap-y-3 text-(--muted)">
+          <dt>Role</dt><dd class="text-(--fg)">{p.role}</dd>
+          {p.engine && <><dt>Engine</dt><dd class="text-(--fg)">{p.engine}</dd></>}
+          {p.duration && <><dt>Duration</dt><dd class="text-(--fg)">{p.duration}</dd></>}
+          {p.players && <><dt>Players</dt><dd class="text-(--fg)">{p.players}</dd></>}
+          <dt>Year</dt><dd class="text-(--fg)">{p.year}</dd>
+        </dl>
+
+        {p.press.length > 0 && (
+          <>
+            <h2 class="display text-2xl mt-10 mb-4">Press</h2>
+            <ul class="space-y-2">
+              {p.press.map((x) => <li><a href={x.url} class="link">{x.label} ↗</a></li>)}
+            </ul>
+          </>
+        )}
+
+        {p.tags.length > 0 && (
+          <>
+            <h2 class="display text-2xl mt-10 mb-4">Tags</h2>
+            <ul class="flex flex-wrap gap-2">
+              {p.tags.map((t) => <li><a href={`/blog/tag/${t}/`} class="chip">#{t}</a></li>)}
+            </ul>
+          </>
+        )}
+      </aside>
+    </div>
+  </article>
+</BaseLayout>

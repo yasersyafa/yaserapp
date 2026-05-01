@@ -1,0 +1,33 @@
+---
+title: Why I rewrote my entity system in Rust
+dek: My C# ECS hit a wall at 50k entities. Here's what changed when I rewrote it in Rust, and what I'd do differently.
+date: 2026-04-28
+tags: [rust, ecs, performance]
+readingTime: 8
+relatedProjects: [neon-drift]
+---
+
+## Why
+
+The C# version was fine until it wasn't. Allocation pressure during component add/remove was producing visible GC pauses on the Steam Deck. I'd been wanting an excuse to learn Rust deeply, and a self-contained ECS is a near-perfect Rust learning project: lots of lifetime puzzles, no async to confuse the picture.
+
+## The old impl
+
+A classic struct-of-arrays ECS with reflection-driven component registration. The reflection pass was the slow part — every spawn touched a dictionary keyed by `Type`.
+
+## Migration
+
+Two weeks of porting, mostly fighting the borrow checker on systems that wanted to mutate two component arrays at once. `split_at_mut` and a typed entity-id wrapper solved most of it.
+
+## Benchmarks
+
+50k entity spawn + tick loop, single thread:
+
+| Impl | Spawn | Tick | Peak alloc |
+|---|---|---|---|
+| C# (old) | 240ms | 18ms | ~80MB |
+| Rust (new) | 32ms | 4.1ms | ~9MB |
+
+## What I'd change
+
+I overbuilt the query system. A simpler iterator-pair API would have shipped two weeks earlier and covered 90% of the cases I actually have.

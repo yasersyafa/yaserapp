@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <rect width="32" height="32" fill="#1A1A2E"/>
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#3DA1A1" stroke-width="1" opacity="0.4"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <rect x="80" y="80" width="640" height="290" fill="none" stroke="#FFB454" stroke-width="6" stroke-dasharray="20,10"/>
+  <text x="400" y="225" text-anchor="middle" font-family="monospace" font-size="36" fill="#F4ECD8">[ screenshot ]</text>
+  <text x="400" y="265" text-anchor="middle" font-family="monospace" font-size="16" fill="#FFB454">drop your hero image here</text>
+</svg>

@@ -1,0 +1,49 @@
+# Cloudflare Pages headers
+# Docs: https://developers.cloudflare.com/pages/configuration/headers/
+
+# ---------- security (all routes) ----------
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
+  Cross-Origin-Opener-Policy: same-origin
+
+# ---------- HTML: short cache, must revalidate ----------
+/
+  Cache-Control: public, max-age=0, must-revalidate
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# ---------- Hashed Astro assets: immutable 1yr ----------
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# ---------- Static (sprites, fonts, images): long cache ----------
+/sprites/*
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+/*.svg
+  Cache-Control: public, max-age=2592000
+/*.png
+  Cache-Control: public, max-age=2592000
+/*.webp
+  Cache-Control: public, max-age=2592000
+/*.avif
+  Cache-Control: public, max-age=2592000
+
+# ---------- RSS / sitemap: 1h ----------
+/rss.xml
+  Cache-Control: public, max-age=3600
+  Content-Type: application/rss+xml; charset=utf-8
+/sitemap-index.xml
+  Cache-Control: public, max-age=3600
+/sitemap-*.xml
+  Cache-Control: public, max-age=3600
+
+# ---------- robots ----------
+/robots.txt
+  Cache-Control: public, max-age=86400

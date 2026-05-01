@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="404" description="Page not found.">
+  <section class="max-w-3xl mx-auto px-5 sm:px-6 pt-24 sm:pt-32 pb-24 text-center">
+    <p class="mono text-[10px] sm:text-xs uppercase tracking-[0.3em] text-(--muted) reveal">404 · not found</p>
+    <h1 class="display text-[clamp(5rem,18vw,12rem)] mt-4 reveal" transition:name="page-title">404.</h1>
+    <p class="text-lg sm:text-xl mt-6 max-w-md mx-auto text-(--muted) reveal">
+      The page you wanted isn't here. Maybe it shipped, maybe it never did.
+    </p>
+    <div class="mt-10 flex flex-wrap gap-3 justify-center reveal">
+      <a href="/" class="btn btn-primary magnet" data-magnet="0.2">← back home</a>
+      <a href="/projects/" class="btn magnet" data-magnet="0.2">see projects</a>
+      <a href="/blog/" class="btn magnet" data-magnet="0.2">read devlog</a>
+    </div>
+  </section>
+</BaseLayout>

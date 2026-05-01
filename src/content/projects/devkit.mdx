@@ -1,0 +1,61 @@
+---
+title: DevKit
+dek: A Rust-based asset hot-reload daemon for indie game projects.
+type: tool
+year: 2025
+role: Solo dev
+languages: [Rust, TypeScript]
+duration: 6 weeks
+hero: /sprites/placeholder-hero.svg
+heroAlt: DevKit terminal output showing live asset reload events
+tags: [rust, tooling, dx]
+featured: true
+links:
+  source: https://github.com/example/devkit
+star:
+  situation:
+    body: >-
+      My iteration loop was painful. Every time I touched a sprite, sound, or texture, I'd wait
+      ~12s while the engine reprocessed assets and reloaded the scene. Across a 6-hour session
+      that's hundreds of dead seconds — and worse, broken flow.
+    points:
+      - 12s round-trip per asset change
+      - Three engines in rotation (Unity, Godot, custom)
+      - No existing tool covered all three
+  task:
+    body: >-
+      Build a daemon that watches the project's `assets/` dir, processes changed files
+      (texture compression, sprite atlasing, audio normalization), and pushes diffs to the
+      running game over a local socket. Cross-engine, cross-platform, &lt;500ms round-trip.
+    points:
+      - Cross-platform (mac, linux, win)
+      - Engine-agnostic protocol
+      - Sub-500ms perceived reload
+  action:
+    body: >-
+      Wrote it in Rust on top of `notify` for file watching, defined per-asset-type pipelines
+      in TOML so adding a new format is config-only, and chose a tiny WebSocket protocol so
+      every engine could integrate with ~50 lines of glue code.
+    points:
+      - Rust + `notify` crate for cross-platform watching
+      - TOML-defined per-asset pipelines
+      - WebSocket protocol — Unity, Godot, custom engines all on it
+  result:
+    body: >-
+      Iteration time dropped from ~12s to under 500ms. Used in two of my last jams.
+      Two friends adopted it for their own projects.
+    points:
+      - Adopted by two other solo devs
+      - Saved hours per jam (24-to-48-hour formats)
+    metrics:
+      - { label: 'Reload time', value: '<500ms' }
+      - { label: 'Iteration speedup', value: '24x' }
+      - { label: 'Engines supported', value: '3' }
+      - { label: 'Lines of glue / engine', value: '~50' }
+---
+
+## Tech notes
+
+- `notify` crate for cross-platform file watching
+- Per-asset-type pipelines defined in TOML
+- WebSocket protocol so the same daemon serves Unity, Godot, and custom engines

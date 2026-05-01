@@ -1,0 +1,68 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+
+const projects = (await getCollection('project'))
+  .sort((a, b) => b.data.year - a.data.year);
+
+const types = ['all', 'game', 'tool', 'web', 'jam'] as const;
+---
+
+<BaseLayout title="Projects" description="Games, tools, web, and jam entries by Yaser Syafa." current="Projects">
+  <section class="max-w-6xl mx-auto px-5 sm:px-6 pt-16 sm:pt-20 pb-10 sm:pb-12">
+    <p class="mono text-[10px] sm:text-xs uppercase tracking-[0.3em] text-(--muted) reveal">Selected work</p>
+    <h1 class="display text-5xl sm:text-7xl mt-4 reveal" transition:name="page-title">Projects</h1>
+    <p class="text-lg sm:text-xl mt-5 sm:mt-6 max-w-2xl text-(--muted) reveal">
+      Games, tools, jam entries, and the occasional web thing.
+    </p>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-5 sm:px-6">
+    <div class="flex flex-wrap items-center gap-2 mono text-[10px] sm:text-xs uppercase tracking-widest mb-8 sm:mb-10 reveal" role="group" aria-label="Filter by type">
+      {types.map((t) => (
+        <button type="button" data-filter={t} class="filter-btn chip data-[active=true]:bg-(--fg) data-[active=true]:text-(--bg) data-[active=true]:border-(--fg)" data-active={t === 'all'}>
+          {t}
+        </button>
+      ))}
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 stagger" id="grid">
+      {projects.map((p) => (
+        <div data-type={p.data.type} class="contents">
+          <ProjectCard
+            href={`/projects/${p.id}/`}
+            title={p.data.title}
+            type={p.data.type}
+            year={p.data.year}
+            engine={p.data.engine}
+            hero={p.data.hero}
+            heroAlt={p.data.heroAlt}
+            featured={p.data.featured}
+          />
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <script>
+    function setupFilter() {
+      const buttons = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+      const items = document.querySelectorAll<HTMLElement>('[data-type]');
+      buttons.forEach((b) => {
+        b.addEventListener('click', () => {
+          const f = b.dataset.filter!;
+          buttons.forEach((x) => (x.dataset.active = String(x === b)));
+          items.forEach((it) => {
+            const child = it.firstElementChild as HTMLElement | null;
+            if (!child) return;
+            const show = f === 'all' || it.dataset.type === f;
+            child.style.display = show ? '' : 'none';
+          });
+        });
+      });
+    }
+    setupFilter();
+    document.addEventListener('astro:after-swap', setupFilter);
+  </script>
+</BaseLayout>

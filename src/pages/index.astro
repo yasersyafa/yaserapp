@@ -1,17 +1,96 @@
 ---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import JsonLd from '../components/JsonLd.astro';
+import { site } from '../site.config';
 
+const projects = (await getCollection('project'))
+  .sort((a, b) => b.data.year - a.data.year);
+const featured = projects.filter((p) => p.data.featured).slice(0, 4);
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 4);
+
+const personLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.author.name,
+  url: site.url,
+  email: `mailto:${site.author.email}`,
+  jobTitle: 'Game developer & software engineer',
+  sameAs: site.socials.map((s) => s.href),
+};
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout>
+  <JsonLd slot="head" data={personLd} />
+
+  <section class="max-w-6xl mx-auto px-5 sm:px-6 pt-16 sm:pt-32 pb-16 sm:pb-20">
+    <p class="mono text-[10px] sm:text-xs text-(--muted) uppercase tracking-[0.3em] reveal">
+      Game dev · Software engineer
+    </p>
+    <h1
+      class="display text-[clamp(2.75rem,11vw,9rem)] mt-5 sm:mt-6 reveal"
+      transition:name="page-title"
+    >
+      Building worlds <span class="text-(--accent)">&</span> the tools that ship them.
+    </h1>
+    <p class="text-lg sm:text-2xl mt-6 sm:mt-8 max-w-2xl text-(--muted) reveal">
+      I'm <span class="text-(--fg)">{site.author.name}</span>. Currently building indie games and the systems behind them.
+    </p>
+    <div class="flex flex-wrap gap-3 mt-8 sm:mt-10 reveal">
+      <a href="/projects/" class="btn btn-primary magnet" data-magnet="0.2">see projects →</a>
+      <a href="/blog/" class="btn magnet" data-magnet="0.2">read devlog</a>
+    </div>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-5 sm:px-6 mt-8 sm:mt-12">
+    <header class="flex items-end justify-between mb-6 sm:mb-10 reveal">
+      <h2 class="display text-3xl sm:text-5xl">Featured</h2>
+      <a href="/projects/" class="link mono text-xs sm:text-sm text-(--muted)">all projects →</a>
+    </header>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 stagger">
+      {featured.map((p) => (
+        <ProjectCard
+          href={`/projects/${p.id}/`}
+          title={p.data.title}
+          type={p.data.type}
+          year={p.data.year}
+          engine={p.data.engine}
+          hero={p.data.hero}
+          heroAlt={p.data.heroAlt}
+          featured={p.data.featured}
+        />
+      ))}
+    </div>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-5 sm:px-6 mt-20 sm:mt-32 pb-12 sm:pb-16">
+    <header class="flex items-end justify-between mb-6 sm:mb-10 reveal">
+      <h2 class="display text-3xl sm:text-5xl">Devlog</h2>
+      <a href="/blog/" class="link mono text-xs sm:text-sm text-(--muted)">all posts →</a>
+    </header>
+    <ul class="divide-y divide-(--line) stagger">
+      {posts.map((post) => (
+        <li>
+          <a href={`/blog/${post.id}/`} class="grid grid-cols-1 sm:grid-cols-[8rem_1fr_auto] gap-1 sm:gap-8 items-baseline py-5 sm:py-6 group">
+            <time
+              datetime={post.data.date.toISOString()}
+              class="mono text-[10px] sm:text-xs uppercase tracking-widest text-(--muted)"
+            >
+              {post.data.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            </time>
+            <h3 class="display text-xl sm:text-3xl group-hover:text-(--accent) transition-colors duration-300">
+              {post.data.title}
+            </h3>
+            <span class="mono text-[10px] sm:text-xs text-(--muted) sm:text-right">
+              {post.data.tags.slice(0, 2).map((t) => `#${t}`).join(' ')}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>

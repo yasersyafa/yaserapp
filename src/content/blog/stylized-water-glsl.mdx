@@ -1,0 +1,36 @@
+---
+title: Stylized water in 60 lines of GLSL
+dek: Cel-shaded water with a foam line, written from scratch — no normal maps, no textures.
+date: 2026-04-14
+tags: [shaders, godot, glsl]
+readingTime: 5
+---
+
+## The look
+
+Three layers stacked: a flat base color, a step-quantized highlight that follows two summed sine waves, and a foam line where the water meets geometry (computed from depth-buffer delta).
+
+## The shader
+
+```glsl
+float wave(vec2 p, float t) {
+  return sin(p.x * 1.7 + t * 0.8) * 0.5
+       + sin(p.y * 2.3 + t * 1.1) * 0.5;
+}
+
+void fragment() {
+  float w = wave(WORLD_POSITION.xz, TIME);
+  float band = step(0.2, fract(w * 4.0));
+  vec3 base = mix(BASE_COLOR, HIGHLIGHT, band);
+
+  float depth = texture(DEPTH_TEXTURE, SCREEN_UV).r;
+  float dist = abs(depth - FRAGCOORD.z);
+  float foam = step(dist, 0.01);
+
+  ALBEDO = mix(base, vec3(1.0), foam);
+}
+```
+
+## Why it works
+
+Stylized water is a depth + step problem, not a normal-map problem. Once you accept that, you stop fighting the engine's PBR pipeline.

@@ -1,0 +1,141 @@
+---
+import { site } from '../site.config';
+const { current } = Astro.props as { current?: string };
+---
+
+<header class="sticky top-0 z-40 backdrop-blur-md bg-[var(--bg)]/70 border-b border-[var(--line)]">
+  <nav class="max-w-6xl mx-auto px-5 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-4">
+    <a href="/" class="display text-lg tracking-tight magnet" data-magnet="0.15" data-nav-link>
+      yaser<span class="text-[var(--accent)]">.</span>
+    </a>
+
+    <ul class="hidden sm:flex items-center gap-5 mono text-sm">
+      {site.nav.map((item) => (
+        <li>
+          <a
+            href={item.href}
+            class="nav-link"
+            aria-current={current === item.label ? 'page' : undefined}
+          >
+            {item.label.toLowerCase()}
+          </a>
+        </li>
+      ))}
+      <li>
+        <button type="button" data-theme-toggle class="nav-link mono text-sm" aria-label="Toggle theme">
+          <span data-theme-icon>auto</span>
+        </button>
+      </li>
+    </ul>
+
+    <span class="sm:hidden w-10 h-10" aria-hidden="true"></span>
+  </nav>
+</header>
+
+<button
+  type="button"
+  id="nav-toggle"
+  class="sm:hidden fixed top-3 right-3 z-[120] w-11 h-11 grid place-items-center rounded-full bg-[var(--bg)] border border-[var(--line)] text-[var(--fg)] shadow-sm"
+  aria-label="Open menu"
+  aria-expanded="false"
+  aria-controls="nav-panel"
+>
+  <span class="block relative w-6 h-[18px]">
+    <span class="absolute left-0 top-0 w-full h-[2px] bg-current origin-center transition-transform duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] [.is-open_&]:translate-y-2 [.is-open_&]:rotate-45"></span>
+    <span class="absolute left-0 top-2 w-full h-[2px] bg-current transition-opacity duration-200 [.is-open_&]:opacity-0"></span>
+    <span class="absolute left-0 bottom-0 w-full h-[2px] bg-current origin-center transition-transform duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] [.is-open_&]:-translate-y-2 [.is-open_&]:-rotate-45"></span>
+  </span>
+</button>
+
+<div
+  id="nav-panel"
+  class="sm:hidden fixed inset-0 z-[110] bg-[var(--bg)] text-[var(--fg)] isolate pointer-events-none opacity-0 transition-opacity duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] [.is-open_&]:opacity-100 [.is-open_&]:pointer-events-auto"
+  aria-hidden="true"
+  inert
+>
+  <div class="h-full flex flex-col px-6 pt-24 pb-12 overflow-y-auto">
+    <ul class="flex flex-col gap-2">
+      {site.nav.map((item, i) => (
+        <li
+          class="opacity-0 translate-y-4 transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] [.is-open_&]:opacity-100 [.is-open_&]:translate-y-0"
+          style={`transition-delay: ${100 + i * 60}ms`}
+        >
+          <a
+            href={item.href}
+            class="display text-5xl block py-2 hover:text-[var(--accent)] transition-colors"
+            aria-current={current === item.label ? 'page' : undefined}
+            data-nav-link
+          >
+            {item.label.toLowerCase()}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <div class="mt-auto pt-10 border-t border-[var(--line)] flex items-center justify-between mono text-sm text-[var(--muted)]">
+      <button type="button" data-theme-toggle class="link" aria-label="Toggle theme">
+        theme: <span data-theme-icon>auto</span>
+      </button>
+      <a href="/rss.xml" class="link" data-nav-link>rss</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  function setupNav() {
+    const KEY = 'yaser-theme';
+    const root = document.documentElement;
+    const body = document.body;
+    const toggle = document.getElementById('nav-toggle');
+    const panel = document.getElementById('nav-panel');
+    const themeBtns = document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]');
+    const navLinks = document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]');
+
+    let open = false;
+    const setOpen = (v: boolean) => {
+      open = v;
+      body.classList.toggle('is-open', v);
+      toggle?.setAttribute('aria-label', v ? 'Close menu' : 'Open menu');
+      toggle?.setAttribute('aria-expanded', String(v));
+      if (panel) {
+        panel.setAttribute('aria-hidden', String(!v));
+        if (v) panel.removeAttribute('inert');
+        else panel.setAttribute('inert', '');
+      }
+      body.style.overflow = v ? 'hidden' : '';
+    };
+
+    toggle?.addEventListener('click', () => setOpen(!open));
+    navLinks.forEach((a) => a.addEventListener('click', () => setOpen(false)));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && open) setOpen(false);
+    });
+
+    const syncIcon = () => {
+      const v = root.dataset.theme ?? 'auto';
+      document.querySelectorAll('[data-theme-icon]').forEach((el) => (el.textContent = v));
+    };
+    syncIcon();
+
+    themeBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const cycle = ['auto', 'light', 'dark'];
+        const next = cycle[(cycle.indexOf(root.dataset.theme ?? 'auto') + 1) % cycle.length];
+        if (next === 'auto') {
+          delete root.dataset.theme;
+          localStorage.removeItem(KEY);
+        } else {
+          root.dataset.theme = next;
+          localStorage.setItem(KEY, next);
+        }
+        syncIcon();
+      });
+    });
+  }
+  setupNav();
+  document.addEventListener('astro:after-swap', () => {
+    document.body.classList.remove('is-open');
+    document.body.style.overflow = '';
+    setupNav();
+  });
+</script>

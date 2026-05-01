@@ -1,0 +1,12 @@
+# Cloudflare Pages redirects
+# Docs: https://developers.cloudflare.com/pages/configuration/redirects/
+
+# Force apex (uncomment + edit once domain is live)
+# https://www.yaser.dev/*   https://yaser.dev/:splat   301
+
+# Legacy paths (add as needed)
+# /old-blog/*               /blog/:splat               301
+
+# 404 fallback (Astro emits /404.html — Pages serves it automatically;
+# this line is harmless backup if you ever switch to SPA mode)
+/*                          /404.html                  404

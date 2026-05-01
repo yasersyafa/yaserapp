@@ -1,0 +1,293 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../site.config';
+
+const projects = await getCollection('project');
+const posts = await getCollection('blog', ({ data }) => !data.draft);
+
+const counts = {
+  years: 5,
+  projects: projects.length,
+  jams: projects.filter((p) => p.data.type === 'jam').length,
+  posts: posts.length,
+};
+
+const skills = [
+  { label: 'Gameplay programming', level: 5 },
+  { label: 'Tooling & pipelines', level: 5 },
+  { label: 'Shader / GLSL', level: 4 },
+  { label: 'Game design', level: 4 },
+  { label: 'Systems architecture', level: 4 },
+  { label: '3D / stylized rendering', level: 3 },
+  { label: 'Pixel & vector art', level: 3 },
+  { label: 'Audio / SFX', level: 2 },
+];
+
+const stack = [
+  { label: 'Engines', items: ['Unity', 'Godot', 'custom (Rust + wgpu)'], accent: 'from-(--accent)/20 to-transparent' },
+  { label: 'Languages', items: ['C#', 'Rust', 'TypeScript', 'GLSL', 'Python'], accent: 'from-(--secondary)/20 to-transparent' },
+  { label: 'Art', items: ['Aseprite', 'Blender', 'Figma'], accent: 'from-(--accent)/15 to-transparent' },
+  { label: 'Audio', items: ['Reaper', 'Bitwig'], accent: 'from-(--secondary)/15 to-transparent' },
+];
+
+const dailyTools = [
+  { label: 'Editor', value: 'Neovim · Cursor' },
+  { label: 'Terminal', value: 'Ghostty + zsh' },
+  { label: 'OS', value: 'macOS · Arch (dual)' },
+  { label: 'Notes', value: 'Obsidian' },
+  { label: 'Design', value: 'Figma · Excalidraw' },
+  { label: 'Versioning', value: 'git · jujutsu' },
+  { label: 'Hardware', value: 'M2 Air · 27" 4K · ZSA Voyager' },
+  { label: 'Music', value: 'AirPods Pro · lo-fi loops' },
+];
+
+const experience = [
+  {
+    role: 'Indie game developer',
+    org: 'Self-employed',
+    period: '2023 — now',
+    bullets: [
+      'Solo-shipping small focused games on itch.io.',
+      'Built DevKit, a Rust asset hot-reload daemon used in two jams since.',
+      'Writing the public devlog as a working notebook.',
+    ],
+  },
+  {
+    role: 'Software engineer',
+    org: 'Freelance / contract',
+    period: '2022 — 2024',
+    bullets: [
+      'Built tooling and internal dashboards for two early-stage teams.',
+      'TypeScript + Rust + Postgres stack, end-to-end ownership.',
+    ],
+  },
+  {
+    role: 'Game programming intern',
+    org: 'Local studio',
+    period: '2021',
+    bullets: [
+      'Gameplay scripting in Unity for a mobile prototype.',
+      'First exposure to ECS and shader pipelines.',
+    ],
+  },
+];
+
+const education = [
+  {
+    school: 'Universitas — TBD',
+    program: 'B.Sc., Computer Science',
+    period: '2020 — 2024',
+    detail: 'Focus on graphics, systems, and HCI. Self-directed game dev throughout.',
+  },
+];
+
+const currently = [
+  { label: 'Building', value: 'Neon Drift — track 5 of 7' },
+  { label: 'Reading', value: 'Game Programming Patterns' },
+  { label: 'Listening', value: 'lo-fi · synthwave' },
+];
+
+const principles = [
+  'Ship the smallest thing that proves the idea.',
+  'Tools earn their keep by removing the next pain.',
+  'The postmortem is the product.',
+];
+---
+
+<BaseLayout title="About" description={`About ${site.author.name}.`} current="About">
+  <section class="max-w-5xl mx-auto px-5 sm:px-6 pt-16 sm:pt-24 pb-10">
+    <p class="mono text-[10px] sm:text-xs uppercase tracking-[0.3em] text-(--muted) reveal">Who I am</p>
+    <h1 class="display text-[clamp(3rem,12vw,9rem)] mt-4 reveal" transition:name="page-title">About.</h1>
+
+    <div class="mt-6 sm:mt-8 flex flex-wrap items-center gap-3 sm:gap-5 mono text-xs sm:text-sm text-(--muted) reveal">
+      <span class="inline-flex items-center gap-2">
+        <span class="relative inline-flex w-2 h-2">
+          <span class="absolute inset-0 rounded-full bg-(--accent) opacity-75 motion-safe:animate-ping"></span>
+          <span class="relative w-2 h-2 rounded-full bg-(--accent)"></span>
+        </span>
+        open to collab
+      </span>
+      <span class="opacity-50">·</span>
+      <span>{site.author.location}</span>
+      <span class="opacity-50">·</span>
+      <span>game dev / software engineer</span>
+    </div>
+  </section>
+
+  <section class="max-w-5xl mx-auto px-5 sm:px-6 pb-16">
+    <div class="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8 sm:gap-12 items-start">
+      <div class="reveal">
+        <div class="aspect-square rounded-2xl border border-(--line) bg-linear-to-br from-(--accent)/15 to-(--secondary)/10 grid place-items-center mono text-xs text-(--muted)">
+          portrait
+        </div>
+        <p class="mono text-[10px] uppercase tracking-widest text-(--muted) mt-3">— {site.author.name}</p>
+      </div>
+      <div class="prose-pixel max-w-2xl text-base sm:text-lg [&_p]:my-5 [&_a]:link [&_a]:text-(--fg) reveal">
+        <p>I build games and the tools that make building games faster. Most of my time goes to small focused projects — usually 2-to-6-month builds where I can be the whole team.</p>
+        <p>Lately I've been deep in <strong class="text-(--fg)">Rust</strong> on the tools side and <strong class="text-(--fg)">stylized 3D</strong> on the game side. The mix isn't accidental: every game I ship teaches me what's painful, and every tool I write removes one of those pains for the next project.</p>
+        <p>I write the <a href="/blog/">devlog</a> as a working notebook. If something here is useful to you, <a href="/contact/">send me a note</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-5xl mx-auto px-5 sm:px-6 py-12 sm:py-16 border-y border-(--line)">
+    <dl class="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 stagger">
+      <div>
+        <dt class="mono text-[10px] uppercase tracking-widest text-(--muted)">Years</dt>
+        <dd class="display text-5xl sm:text-7xl mt-2"><span data-count={counts.years} data-count-suffix="+">0+</span></dd>
+      </div>
+      <div>
+        <dt class="mono text-[10px] uppercase tracking-widest text-(--muted)">Projects</dt>
+        <dd class="display text-5xl sm:text-7xl mt-2 text-(--accent)"><span data-count={counts.projects}>0</span></dd>
+      </div>
+      <div>
+        <dt class="mono text-[10px] uppercase tracking-widest text-(--muted)">Jams</dt>
+        <dd class="display text-5xl sm:text-7xl mt-2"><span data-count={counts.jams}>0</span></dd>
+      </div>
+      <div>
+        <dt class="mono text-[10px] uppercase tracking-widest text-(--muted)">Posts</dt>
+        <dd class="display text-5xl sm:text-7xl mt-2 text-(--secondary)"><span data-count={counts.posts}>0</span></dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="max-w-5xl mx-auto px-5 sm:px-6 mt-16 sm:mt-24">
+    <header class="flex items-end justify-between mb-6 sm:mb-10 reveal">
+      <h2 class="display text-3xl sm:text-5xl">Skills</h2>
+      <p class="mono text-xs text-(--muted) hidden sm:block">what I'm good at</p>
+    </header>
+    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-5 stagger">
+      {skills.map((s) => (
+        <li class="flex items-center justify-between gap-4 py-2 border-b border-(--line)">
+          <span class="text-base sm:text-lg">{s.label}</span>
+          <span class="flex gap-1.5 shrink-0" aria-label={`${s.level} of 5`}>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <span class={`w-2 h-2 rounded-full ${i < s.level ? 'bg-(--fg)' : 'bg-(--line)'}`}></span>
+            ))}
+          </span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="max-w-5xl mx-auto px-5 sm:px-6 mt-16 sm:mt-24">
+    <header class="flex items-end justify-between mb-6 sm:mb-10 reveal">
+      <h2 class="display text-3xl sm:text-5xl">Stack</h2>
+      <p class="mono text-xs text-(--muted) hidden sm:block">tools I reach for</p>
+    </header>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 stagger">
+      {stack.map((s) => (
+        <div class={`tilt rounded-2xl border border-(--line) p-5 sm:p-6 bg-linear-to-br ${s.accent} group transition-colors hover:border-(--fg)`} data-tilt="4">
+          <p class="mono text-[10px] uppercase tracking-widest text-(--muted) mb-3">{s.label}</p>
+          <ul class="flex flex-wrap gap-2">
+            {s.items.map((it) => (
+              <li class="chip group-hover:border-(--fg) group-hover:text-(--fg) transition-colors">{it}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="max-w-5xl mx-auto px-5 sm:px-6 mt-16 sm:mt-24">
+    <header class="flex items-end justify-between mb-6 sm:mb-10 reveal">
+      <h2 class="display text-3xl sm:text-5xl">Daily tools</h2>
+      <p class="mono text-xs text-(--muted) hidden sm:block">what's open right now</p>
+    </header>
+    <dl class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 stagger">
+      {dailyTools.map((t) => (
+        <div class="rounded-xl border border-(--line) p-4 sm:p-5 hover:border-(--fg) transition-colors">
+          <dt class="mono text-[10px] uppercase tracking-widest text-(--muted)">{t.label}</dt>
+          <dd class="mt-2 text-base sm:text-lg">{t.value}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+
+  <section class="max-w-5xl mx-auto px-5 sm:px-6 mt-16 sm:mt-24">
+    <header class="flex items-end justify-between mb-8 sm:mb-12 reveal">
+      <h2 class="display text-3xl sm:text-5xl">Experience</h2>
+      <p class="mono text-xs text-(--muted) hidden sm:block">where I've worked</p>
+    </header>
+    <ol class="relative">
+      <span aria-hidden="true" class="absolute left-3 sm:left-4 top-2 bottom-2 w-px bg-(--line)"></span>
+      <div class="stagger space-y-10 sm:space-y-12">
+        {experience.map((e) => (
+          <li class="relative pl-10 sm:pl-14">
+            <span class="absolute left-1.5 sm:left-2.5 top-2 w-3 h-3 rounded-full bg-(--accent) ring-4 ring-(--bg)"></span>
+            <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <p class="display text-2xl sm:text-3xl">{e.role}</p>
+              <span class="mono text-xs text-(--muted)">@ {e.org}</span>
+            </div>
+            <p class="mono text-[10px] uppercase tracking-widest text-(--muted) mt-1">{e.period}</p>
+            <ul class="mt-3 space-y-1.5 text-(--muted) max-w-2xl text-sm sm:text-base list-disc list-outside ml-4 marker:text-(--accent)">
+              {e.bullets.map((b) => <li>{b}</li>)}
+            </ul>
+          </li>
+        ))}
+      </div>
+    </ol>
+  </section>
+
+  <section class="max-w-5xl mx-auto px-5 sm:px-6 mt-16 sm:mt-24">
+    <header class="flex items-end justify-between mb-6 sm:mb-10 reveal">
+      <h2 class="display text-3xl sm:text-5xl">Education</h2>
+      <p class="mono text-xs text-(--muted) hidden sm:block">where I learned</p>
+    </header>
+    <div class="grid grid-cols-1 stagger gap-4 sm:gap-6">
+      {education.map((e) => (
+        <div class="rounded-2xl border border-(--line) p-5 sm:p-6 hover:border-(--fg) transition-colors">
+          <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <p class="display text-xl sm:text-2xl">{e.school}</p>
+            <span class="mono text-xs text-(--muted)">· {e.period}</span>
+          </div>
+          <p class="mt-1 text-base">{e.program}</p>
+          {e.detail && <p class="mt-2 text-(--muted) text-sm sm:text-base max-w-2xl">{e.detail}</p>}
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="max-w-5xl mx-auto px-5 sm:px-6 mt-16 sm:mt-24">
+    <header class="flex items-end justify-between mb-6 sm:mb-10 reveal">
+      <h2 class="display text-3xl sm:text-5xl">Currently</h2>
+      <p class="mono text-xs text-(--muted) hidden sm:block">snapshot</p>
+    </header>
+    <ul class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 stagger">
+      {currently.map((c) => (
+        <li class="rounded-2xl border border-(--line) p-5 hover:border-(--fg) transition-colors">
+          <p class="mono text-[10px] uppercase tracking-widest text-(--muted)">{c.label}</p>
+          <p class="display text-xl mt-2">{c.value}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="max-w-5xl mx-auto px-5 sm:px-6 mt-16 sm:mt-24">
+    <header class="mb-6 sm:mb-10 reveal">
+      <h2 class="display text-3xl sm:text-5xl">How I work</h2>
+    </header>
+    <ul class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 stagger">
+      {principles.map((p, i) => (
+        <li class="rounded-2xl border border-(--line) p-5 sm:p-6 hover:border-(--fg) transition-colors">
+          <span class="mono text-xs text-(--accent)">0{i + 1}</span>
+          <p class="display text-xl sm:text-2xl mt-3 leading-snug">{p}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="max-w-5xl mx-auto px-5 sm:px-6 mt-20 sm:mt-32 mb-16 sm:mb-24">
+    <div class="rounded-3xl border border-(--line) p-8 sm:p-14 bg-linear-to-br from-(--accent)/10 to-transparent text-center reveal">
+      <p class="mono text-[10px] sm:text-xs uppercase tracking-[0.3em] text-(--muted)">Get in touch</p>
+      <p class="display text-3xl sm:text-5xl mt-4 max-w-2xl mx-auto">
+        Got an idea, a jam team, or a tool that needs building?
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3 justify-center">
+        <a href="/contact/" class="btn btn-primary magnet" data-magnet="0.2">say hi →</a>
+        <a href="/projects/" class="btn magnet" data-magnet="0.2">see work</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

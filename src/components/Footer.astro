@@ -1,0 +1,19 @@
+---
+import { site } from '../site.config';
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-(--line) mt-20 sm:mt-24">
+  <div class="max-w-6xl mx-auto px-5 sm:px-6 py-10 sm:py-12 flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between mono text-sm text-(--muted)">
+    <div class="space-y-2">
+      <p class="display text-2xl text-(--fg)">yaser<span class="text-(--accent)">.</span></p>
+      <p>© {year} {site.author.name}</p>
+    </div>
+    <ul class="grid grid-cols-2 sm:flex sm:flex-wrap gap-x-6 gap-y-3 sm:justify-end">
+      {site.socials.map((s) => (
+        <li><a href={s.href} class="link inline-block py-1" rel="me">{s.label.toLowerCase()} ↗</a></li>
+      ))}
+      <li><a href="/rss.xml" class="link inline-block py-1">rss</a></li>
+    </ul>
+  </div>
+</footer>
