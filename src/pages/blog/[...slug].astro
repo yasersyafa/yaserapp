@@ -4,10 +4,21 @@ import ArticleLayout from '../../layouts/ArticleLayout.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
-  return posts.map((p) => ({ params: { slug: p.id }, props: { post: p } }));
+  const sorted = [...posts].sort((a, b) => {
+    const dt = a.data.date.getTime() - b.data.date.getTime();
+    return dt !== 0 ? dt : a.id.localeCompare(b.id);
+  });
+  return sorted.map((p, i) => ({
+    params: { slug: p.id },
+    props: {
+      post: p,
+      prev: i > 0 ? { id: sorted[i - 1].id, title: sorted[i - 1].data.title } : null,
+      next: i < sorted.length - 1 ? { id: sorted[i + 1].id, title: sorted[i + 1].data.title } : null,
+    },
+  }));
 }
 
-const { post } = Astro.props;
+const { post, prev, next } = Astro.props;
 const { Content } = await render(post);
 ---
 
@@ -19,6 +30,8 @@ const { Content } = await render(post);
   tags={post.data.tags}
   readingTime={post.data.readingTime}
   slug={post.id}
+  prev={prev}
+  next={next}
 >
   <Content />
 </ArticleLayout>

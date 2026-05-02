@@ -8,7 +8,7 @@ readingTime: 7
 
 ## Layers first, then arrows
 
-The architecture has five layers. Each layer has an expected Instability range. Dependencies flow downward only — top layers depend on lower layers, never the other way. This is the Stable Dependency Principle wired into the architecture itself, not enforced by hope.
+The architecture has five layers. Each layer has an expected Instability range. Dependencies flow downward only. Top layers depend on lower layers, never the other way. This is the Stable Dependency Principle wired into the architecture itself, not enforced by hope.
 
 <div class="not-prose my-10 font-mono">
   <div class="space-y-0">
@@ -42,7 +42,7 @@ The architecture has five layers. Each layer has an expected Instability range. 
       </div>
       <div>
         <div class="text-sm text-(--fg)">CharacterSystem · PlacementSystem · Seat</div>
-        <div class="text-xs text-(--muted) mt-1.5 leading-relaxed">Game logic core. Depends on Data Layer only — never on Manager.</div>
+        <div class="text-xs text-(--muted) mt-1.5 leading-relaxed">Game logic core. Depends on Data Layer only, never on Manager.</div>
       </div>
     </div>
     <div class="grid grid-cols-[10rem_1fr] gap-6 items-baseline py-5 border-b border-(--line)">
@@ -74,9 +74,9 @@ The architecture has five layers. Each layer has an expected Instability range. 
 Two notes on reading this:
 
 - **The I ranges are targets, not laws.** A Manager class that briefly sits at 0.78 isn't an emergency. A Core class that sits at 0.65 is.
-- **The arrow direction matters more than the layer names.** "View" or "Manager" are descriptive; the actual rule is the arrow. Anything pointing the wrong way (e.g. Core → Manager) is a violation, regardless of what we call the boxes.
+- **The arrow direction matters more than the layer names.** "View" or "Manager" are descriptive. The actual rule is the arrow. Anything pointing the wrong way (e.g. Core → Manager) is a violation, regardless of what we call the boxes.
 
-## Before VContainer — the relationships I want to kill
+## Before VContainer: the relationships I want to kill
 
 Prototype as it stands today. Every line below is a concrete dependency one class has on another by name.
 
@@ -94,7 +94,7 @@ Prototype as it stands today. Every line below is a concrete dependency one clas
   </div>
 </div>
 
-## After VContainer — the new shape
+## After VContainer: the new shape
 
 `Plant` no longer references manager classes by name. It exposes the `IPlantSelectable` interface, publishes events, and the managers subscribe. The cycle is gone. `Seat` no longer reaches up.
 
@@ -111,9 +111,9 @@ Prototype as it stands today. Every line below is a concrete dependency one clas
     </ul>
   </div>
   <div class="grid grid-cols-3 gap-3 mt-4 text-[11px]">
-    <div class="px-3 py-2 rounded border border-(--line)"><span class="text-(--fg)">solid</span> <span class="text-(--muted)">— typed dep</span></div>
-    <div class="px-3 py-2 rounded border border-(--line)"><span style="color:var(--secondary)">teal</span> <span class="text-(--muted)">— DI via interface</span></div>
-    <div class="px-3 py-2 rounded border border-(--line)"><span style="color:var(--accent)">amber</span> <span class="text-(--muted)">— event (anonymous)</span></div>
+    <div class="px-3 py-2 rounded border border-(--line)"><span class="text-(--fg)">solid</span> <span class="text-(--muted)">typed dep</span></div>
+    <div class="px-3 py-2 rounded border border-(--line)"><span style="color:var(--secondary)">teal</span> <span class="text-(--muted)">DI via interface</span></div>
+    <div class="px-3 py-2 rounded border border-(--line)"><span style="color:var(--accent)">amber</span> <span class="text-(--muted)">event (anonymous)</span></div>
   </div>
 </div>
 
@@ -121,23 +121,23 @@ Prototype as it stands today. Every line below is a concrete dependency one clas
 
 The numeric version of the same picture, just for the four problem children:
 
-| System                  | Ce (non-DI) — depends on                                                                       | Ce now | Ce (VContainer) — depends on                                   | Ce target         |
+| System                  | Ce (non-DI) depends on                                                                         | Ce now | Ce (VContainer) depends on                                     | Ce target         |
 | ----------------------- | ---------------------------------------------------------------------------------------------- | ------ | -------------------------------------------------------------- | ----------------- |
 | `Plant`                 | `Seat`, `PlantPreference`, `PlantOutlineHover`, `PlantSelectionManager`, `CustomCursorManager` | 5      | `Seat`, `PlantPreference`, `PlantOutlineHover` (via interface) | 2–3               |
 | `PlantSelectionManager` | `Plant`, `Seat`, `ScoreManager`                                                                | 3      | `IPlantSelectable`, `ISeat`, `ISatisfactionSystem`             | 3 (via interface) |
 | `SatisfactionSystem`    | `Seat`, `Plant`, `PreferenceChecker`                                                           | 3      | `IPlacementSystem`, `ICharacterSystem` (DI-injected)           | 2                 |
 | `Seat`                  | `Plant`, `PlantSelectionManager`                                                               | 2      | `Plant` (data only)                                            | 1                 |
 
-The interface trick on `PlantSelectionManager` is the one most worth highlighting. The Ce *number* doesn't drop — but it changes from "depends on 3 concrete classes I can't replace" to "depends on 3 interfaces I can swap or fake." Same number, different kind of coupling. Constantine's metric doesn't capture that distinction; SDP does, and the verdict column on the next measurement pass should reflect it.
+The interface trick on `PlantSelectionManager` is the one most worth highlighting. The Ce number doesn't drop, but it changes from "depends on 3 concrete classes I can't replace" to "depends on 3 interfaces I can swap or fake." Same number, different kind of coupling. Constantine's metric doesn't capture that distinction; SDP does, and the verdict column on the next measurement pass should reflect it.
 
 ## What's removed in plain terms
 
 The two specific dependencies the refactor kills:
 
-1. `Plant` → `PlantSelectionManager` — was inside `Plant.OnClick()` calling `PlantSelectionManager.Instance`. Becomes: `Plant` raises `OnPlantClicked` event; `PlantSelectionManager` subscribes.
-2. `Plant` → `CustomCursorManager` — was inside `Plant.SetSelected()` calling `CustomCursorManager.Instance`. Becomes: `Plant` raises `OnPlantSelected` event; `CustomCursorManager` subscribes.
+1. `Plant` → `PlantSelectionManager`. Was inside `Plant.OnClick()` calling `PlantSelectionManager.Instance`. Becomes: `Plant` raises an `OnPlantClicked` event, and `PlantSelectionManager` subscribes.
+2. `Plant` → `CustomCursorManager`. Was inside `Plant.SetSelected()` calling `CustomCursorManager.Instance`. Becomes: `Plant` raises an `OnPlantSelected` event, and `CustomCursorManager` subscribes.
 
-Both edits compile to the same runtime behaviour. The only thing that changes is the *direction of knowledge*. After the edit, `Plant` no longer knows that `PlantSelectionManager` or `CustomCursorManager` exist.
+Both edits compile to the same runtime behaviour. The only thing that changes is the direction of knowledge. After the edit, `Plant` no longer knows that `PlantSelectionManager` or `CustomCursorManager` exist.
 
 ## Next
 

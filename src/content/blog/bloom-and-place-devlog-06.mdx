@@ -1,6 +1,6 @@
 ---
 title: "Bloom & Place devlog #6: why VContainer (and not Zenject)"
-dek: There are real DI frameworks for Unity. I picked the one whose pitch matches what I want the architecture to do — not the one with the biggest tutorial library.
+dek: There are real DI frameworks for Unity. I picked the one whose pitch matches what I want the architecture to do, not the one with the biggest tutorial library.
 date: 2026-05-02
 tags: [unity, architecture, vcontainer]
 readingTime: 5
@@ -14,7 +14,7 @@ I went with VContainer. Three reasons, in order of how much they actually matter
 
 ## 1. Pure C# entry points
 
-VContainer is built specifically to support separating domain logic from presentation. Plain C# classes can be entry points — they don't have to inherit from `MonoBehaviour` to participate in the container's lifecycle.
+VContainer is built specifically to support separating domain logic from presentation. Plain C# classes can be entry points; they don't have to inherit from `MonoBehaviour` to participate in the container's lifecycle.
 
 This sounds like a small thing. It's the most important thing. The whole architectural argument falls over the moment domain logic is forced into MonoBehaviour, because MonoBehaviour drags scene-graph existence, Unity message methods, and a particular construction model into classes that have no business caring about any of that. Letting `ScoreSystem` be a pure C# class with a constructor is what makes the rest of the loosely-coupled story actually work.
 
@@ -22,7 +22,7 @@ Extenject can do this too, but VContainer treats it as the default path. The pat
 
 ## 2. Performance and allocation behaviour
 
-VContainer's public benchmarks claim 5–10x faster resolution than Zenject/Extenject and zero garbage-collection allocation during the resolve path. For a game running at 60+ fps, that second claim matters more than the first — frame-time spikes from allocation pressure are exactly the kind of thing that's invisible during development and embarrassing on the Steam Deck.
+VContainer's public benchmarks claim 5–10x faster resolution than Zenject/Extenject and zero garbage-collection allocation during the resolve path. For a game running at 60+ fps, that second claim matters more than the first. Frame-time spikes from allocation pressure are exactly the kind of thing that's invisible during development and embarrassing on the Steam Deck.
 
 I'm not building Bloom & Place to chase microbenchmarks. The container resolves once at startup and that's mostly it. But "fast and zero-alloc" beats "slower and allocates" with no other variables changed, so the choice is free.
 
@@ -32,7 +32,7 @@ Zenject grew over many years and the API surface shows it. Multiple ways to do t
 
 ## LifetimeScope, the one concept you must internalise
 
-The central VContainer concept is `LifetimeScope`: a class that defines a DI container's contents and the lifetime of those contents. You subclass it, override `Configure(IContainerBuilder builder)`, and register your systems inside.
+The central VContainer concept is `LifetimeScope`, a class that defines a DI container's contents and the lifetime of those contents. You subclass it, override `Configure(IContainerBuilder builder)`, and register your systems inside.
 
 ```csharp
 public sealed class GameLifetimeScope : LifetimeScope {
@@ -48,10 +48,10 @@ public sealed class GameLifetimeScope : LifetimeScope {
 Three lifetimes are available, and getting them right is most of the design work:
 
 - **Singleton.** One instance for the lifetime of the container. Use for systems that own state shared across the whole game (`ScoreSystem`, `PlantRegistry`).
-- **Scoped.** One instance per scope. Use when you have nested scopes — e.g. a level scope that should reset between levels.
+- **Scoped.** One instance per scope. Use when you have nested scopes, e.g. a level scope that should reset between levels.
 - **Transient.** A new instance per resolve. Use for objects that legitimately have no shared state.
 
-The default I'm starting with: most domain systems are singletons inside a single root `LifetimeScope`. Nested scopes get introduced only when I have a concrete reason — usually "this thing should die when the level does."
+The default I'm starting with: most domain systems are singletons inside a single root `LifetimeScope`. Nested scopes get introduced only when I have a concrete reason, usually "this thing should die when the level does."
 
 ## What I'm not doing
 

@@ -292,3 +292,28 @@
   animation-duration: 320ms;
   animation-timing-function: var(--ease-out-quart);
 }
+
+html,
+body {
+  overflow-x: clip;
+}
+
+.table-wrap {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin: 1.5rem 0;
+  border-radius: 0.75rem;
+  -webkit-overflow-scrolling: touch;
+}
+.table-wrap > table {
+  margin: 0 !important;
+  width: max-content;
+  min-width: 100%;
+}
+.table-wrap > table th,
+.table-wrap > table td {
+  white-space: nowrap;
+}

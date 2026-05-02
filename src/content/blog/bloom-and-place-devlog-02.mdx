@@ -1,6 +1,6 @@
 ---
 title: "Bloom & Place devlog #2: the baseline I'm trying to beat"
-dek: Before refactoring anything, I measured the prototype's coupling. Here are the numbers I have to improve on — including the line of code I'm most embarrassed by.
+dek: Before refactoring anything, I measured the prototype's coupling. Here are the numbers I have to improve on, including the line of code I'm most embarrassed by.
 date: 2026-05-02
 tags: [unity, architecture, metrics]
 readingTime: 5
@@ -8,21 +8,21 @@ readingTime: 5
 
 ## Don't refactor what you didn't measure
 
-Last post I committed to a falsifiable architecture claim. That only works if the "before" picture is real — not a strawman I cooked up to make the after look good. So before touching VContainer, I ran Ce/Ca over the existing prototype as it stands today.
+Last post I committed to a falsifiable architecture claim. That only works if the "before" picture is real, not a strawman I cooked up to make the after look good. So before touching VContainer, I ran Ce/Ca over the existing prototype as it stands today.
 
 ## A quick refresher on the metrics
 
-Three numbers, all from Robert C. Martin's _Agile Software Development: Principles, Patterns, and Practices_. Devlog #7 goes deep on these — short version below so this post stands on its own.
+Three numbers, all from Robert C. Martin's _Agile Software Development: Principles, Patterns, and Practices_. Devlog #7 goes deep on these. Short version below so this post stands on its own.
 
-- **Efferent Coupling (`Ce`).** Outgoing arrows. How many other classes does this class depend on? Count the distinct external types it references by name. High Ce = "this class knows about a lot of stuff and breaks when any of it changes."
-- **Afferent Coupling (`Ca`).** Incoming arrows. How many other classes depend on this one? High Ca = "lots of code will break if I change this class."
-- **Instability Index (`I`).** Ratio of outgoing to total. `I = Ce / (Ce + Ca)`, range 0.00 to 1.00. `I = 0` means stable (depended on but doesn't reach out). `I = 1` means unstable (reaches out but nothing depends on it). Neither extreme is universally good or bad — it depends on the class's role. Foundation/data classes should be near 0; view leaves can sit at 1.
+- **Efferent Coupling (`Ce`).** Outgoing arrows. How many other classes does this class depend on? Count the distinct external types it references by name. High Ce means this class knows about a lot of stuff and breaks when any of it changes.
+- **Afferent Coupling (`Ca`).** Incoming arrows. How many other classes depend on this one? High Ca means lots of code will break if I change this class.
+- **Instability Index (`I`).** Ratio of outgoing to total, computed as `I = Ce / (Ce + Ca)`, range 0.00 to 1.00. An `I = 0` means stable (depended on but doesn't reach out). An `I = 1` means unstable (reaches out but nothing depends on it). Neither extreme is universally good or bad. It depends on the class's role. Foundation and data classes should be near 0, while view leaves can sit at 1.
 
-The Stable Dependency Principle ties them together: dependencies should always flow from less stable (high I) toward more stable (low I). When a high-I class depends on a low-I class, that's correct. When a low-I core class reaches into a high-I manager, that's the violation worth hunting for.
+The Stable Dependency Principle ties them together. Dependencies should always flow from less stable (high I) toward more stable (low I). When a high-I class depends on a low-I class, that's correct. When a low-I core class reaches into a high-I manager, that's the violation worth hunting for.
 
 ## The headline numbers
 
-Computed across every script in the prototype. `I = Ce / (Ce + Ca)`, range 0.00 (stable) to 1.00 (unstable). Verdict column is whether the I value is _appropriate for that class's architectural role_ — not just whether the number is low.
+Computed across every script in the prototype. `I = Ce / (Ce + Ca)`, range 0.00 (stable) to 1.00 (unstable). The verdict column is whether the I value is _appropriate for that class's architectural role_, not just whether the number is low.
 
 | Class                   | Layer      | Ce  | Ca  | I    | Status         | Verdict         |
 | ----------------------- | ---------- | --- | --- | ---- | -------------- | --------------- |
@@ -38,12 +38,12 @@ Computed across every script in the prototype. `I = Ce / (Ce + Ca)`, range 0.00 
 
 Reading the table by row, in the order the verdicts hurt most:
 
-- **`ScoreManager` — Unhealthy.** Manager-layer classes can sit at I ≤ 0.60 without alarm. 0.75 is over the line. Three outgoing dependencies (`Seat`, `Plant`, `PreferenceChecker`) and only one incoming (`PlantSelectionManager`). It's reaching outward more than it's being reached inward, which is the wrong shape for a class that's supposed to be a score _sink_.
-- **`Plant` — Borderline.** Core-layer classes should sit at I ≤ 0.40. `Plant` is at 0.56. The Ce list is the giveaway: `Seat`, `PlantPreference`, `PlantOutlineHover`, `PlantSelectionManager`, `CustomCursorManager`. Two of those (the managers) are _higher_ in the architecture than `Plant`. Core reaching upward into managers — wrong direction.
-- **`PlantSelectionManager` — Borderline.** I = 0.60 is on the edge of acceptable for a manager. The real problem isn't the number, it's that `PlantSelectionManager` and `Plant` have a circular dependency: each one knows about the other. That breaks Acyclic Dependencies Principle outright.
-- **`Seat` — Healthy on paper, watch in practice.** I = 0.40 is fine for core. But `Seat.OnMouseDown` calls `PlantSelectionManager.Instance` directly, which is the SDP-violation arrow that doesn't show up in the raw I number — it shows up when you ask _which layer is each dependency from?_
-- **Foundation + Data layers — all Healthy.** Ce = 0 across the board. They depend on nothing and get depended on. Exactly the shape you want at the bottom of the architecture.
-- **`PlantParticleEffect` — Healthy despite I = 1.00.** Leaf node, view layer. I = 1.00 is correct for view code. The metric only flags this if you read it without context.
+- **`ScoreManager`, Unhealthy.** Manager-layer classes can sit at I ≤ 0.60 without alarm. 0.75 is over the line. Three outgoing dependencies (`Seat`, `Plant`, `PreferenceChecker`) and only one incoming (`PlantSelectionManager`). It reaches outward more than it gets reached inward, which is the wrong shape for a class that's supposed to be a score sink.
+- **`Plant`, Borderline.** Core-layer classes should sit at I ≤ 0.40. `Plant` is at 0.56. The Ce list is the giveaway: `Seat`, `PlantPreference`, `PlantOutlineHover`, `PlantSelectionManager`, `CustomCursorManager`. Two of those (the managers) are higher in the architecture than `Plant`. Core reaching upward into managers, wrong direction.
+- **`PlantSelectionManager`, Borderline.** I = 0.60 sits on the edge of acceptable for a manager. The real problem isn't the number, it's that `PlantSelectionManager` and `Plant` have a circular dependency. Each one knows about the other, which breaks the Acyclic Dependencies Principle outright.
+- **`Seat`, Healthy on paper, watch in practice.** I = 0.40 is fine for core. But `Seat.OnMouseDown` calls `PlantSelectionManager.Instance` directly, which is the SDP-violation arrow that doesn't show up in the raw I number. It shows up when you ask which layer is each dependency from.
+- **Foundation and Data layers, all Healthy.** Ce = 0 across the board. They depend on nothing and get depended on. Exactly the shape you want at the bottom of the architecture.
+- **`PlantParticleEffect`, Healthy despite I = 1.00.** Leaf node, view layer. I = 1.00 is correct for view code. The metric only flags this if you read it without context.
 
 The lesson the table teaches in one sentence: the bad numbers cluster in the middle of the architecture, not at the edges.
 
@@ -56,17 +56,15 @@ void OnMouseDown() {
 }
 ```
 
-`Seat` is core gameplay state. `PlantSelectionManager` is, well, a manager. The dependency arrow points the wrong direction — core is reaching into the manager layer. This violates the Stable Dependency Principle in the most literal way possible: an unstable handler in a stable class.
+`Seat` is core gameplay state. `PlantSelectionManager` is, well, a manager. The dependency arrow points the wrong direction. Core is reaching into the manager layer, which violates the Stable Dependency Principle in the most literal way possible: an unstable handler in a stable class.
 
-The reason it's there is the reason these things are always there: I needed selection state from inside an input callback, and `.Instance` was the closest thing in arm's reach.
+The reason it's there is the reason these things are always there. I needed selection state from inside an input callback, and `.Instance` was the closest thing in arm's reach.
 
 ## Why I'm publishing this before the fix
 
-Two reasons.
+Two reasons. First, if I publish only the after-numbers, you have no way to evaluate the claim. "We made it better" with no baseline is marketing.
 
-One: if I publish only the after-numbers, you have no way to evaluate the claim. "We made it better" with no baseline is marketing.
-
-Two: writing the baseline down forces me to commit to it. The Ce/Ca for `Plant` won't quietly drift while I work — it's pinned to this post. If the refactor doesn't move it, that's on the architecture, not on me re-running the tool with friendlier inputs.
+Second, writing the baseline down forces me to commit to it. The Ce/Ca for `Plant` won't quietly drift while I work, because it's pinned to this post. If the refactor doesn't move it, that's on the architecture, not on me re-running the tool with friendlier inputs.
 
 ## What I want the after-table to look like
 

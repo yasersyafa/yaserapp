@@ -8,11 +8,11 @@ readingTime: 6
 
 ## Why interface contracts exist on this project
 
-Bloom & Place is being built by two programmers — a gameplay programmer (me) and a visual programmer. Without contracts, that splits two ways: either we serialise the work (one waits while the other ships), or we both build against assumptions and find out at integration that they didn't match.
+Bloom & Place is being built by two programmers, a gameplay programmer (me) and a visual programmer. Without contracts, that splits two ways. Either we serialise the work and one waits while the other ships, or we both build against assumptions and find out at integration that they didn't match.
 
-Interface contracts kill that. Each interface is a typed agreement: *whoever implements this exposes these members, and whoever consumes it can rely on them*. Implementer and consumer can develop in parallel. Neither needs to read the other's code.
+Interface contracts kill that. Each interface is a typed agreement. Whoever implements it exposes these members, and whoever consumes it can rely on them. Implementer and consumer can develop in parallel. Neither needs to read the other's code.
 
-This is the same DI argument I made in devlog #4, applied at the team-process level. DI buys parallel development; interface contracts are the document that makes the parallelism real.
+This is the same DI argument I made in devlog #4, applied at the team-process level. DI buys parallel development. Interface contracts are the document that makes the parallelism real.
 
 ## The four contracts
 
@@ -21,7 +21,7 @@ This is the same DI argument I made in devlog #4, applied at the team-process le
     <div class="px-5 py-4 border-b border-(--line) flex items-baseline gap-3">
       <span class="text-[10px] uppercase tracking-[0.2em] text-(--accent)">Contract 01</span>
       <span class="text-base text-(--fg)">IPlantSelectable</span>
-      <span class="text-xs text-(--muted)">— player-input</span>
+      <span class="text-xs text-(--muted)">player-input</span>
     </div>
     <div class="grid sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-(--line) text-sm">
       <div class="p-5">
@@ -45,7 +45,7 @@ This is the same DI argument I made in devlog #4, applied at the team-process le
     <div class="px-5 py-4 border-b border-(--line) flex items-baseline gap-3">
       <span class="text-[10px] uppercase tracking-[0.2em] text-(--accent)">Contract 02</span>
       <span class="text-base text-(--fg)">ISatisfactionFeedback</span>
-      <span class="text-xs text-(--muted)">— satisfaction-result</span>
+      <span class="text-xs text-(--muted)">satisfaction-result</span>
     </div>
     <div class="grid sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-(--line) text-sm">
       <div class="p-5">
@@ -69,7 +69,7 @@ This is the same DI argument I made in devlog #4, applied at the team-process le
     <div class="px-5 py-4 border-b border-(--line) flex items-baseline gap-3">
       <span class="text-[10px] uppercase tracking-[0.2em] text-(--accent)">Contract 03</span>
       <span class="text-base text-(--fg)">IPlacementFeedback</span>
-      <span class="text-xs text-(--muted)">— placement-events</span>
+      <span class="text-xs text-(--muted)">placement-events</span>
     </div>
     <div class="grid sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-(--line) text-sm">
       <div class="p-5">
@@ -93,7 +93,7 @@ This is the same DI argument I made in devlog #4, applied at the team-process le
     <div class="px-5 py-4 border-b border-(--line) flex items-baseline gap-3">
       <span class="text-[10px] uppercase tracking-[0.2em] text-(--accent)">Contract 04</span>
       <span class="text-base text-(--fg)">ILevelFeedback</span>
-      <span class="text-xs text-(--muted)">— level-state</span>
+      <span class="text-xs text-(--muted)">level-state</span>
     </div>
     <div class="grid sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-(--line) text-sm">
       <div class="p-5">
@@ -116,11 +116,11 @@ This is the same DI argument I made in devlog #4, applied at the team-process le
 
 Three observations from the contracts:
 
-- **Every contract is event-shaped, not method-shaped.** All four interfaces expose events; only `IPlantSelectable` exposes a single method. The visual programmer reacts to things; they don't drive things. That asymmetry is the contract enforcing the layer hierarchy from devlog #10.
-- **The visual programmer never sees concrete gameplay types.** They subscribe to events that pass `PlantData` or `Plant` references — but only as read-only lookups, never as objects to mutate. The contract is one-directional information flow.
+- **Every contract is event-shaped, not method-shaped.** All four interfaces expose events. Only `IPlantSelectable` exposes a single method. The visual programmer reacts to things; they don't drive things. That asymmetry is the contract enforcing the layer hierarchy from devlog #10.
+- **The visual programmer never sees concrete gameplay types.** They subscribe to events that pass `PlantData` or `Plant` references, but only as read-only lookups, never as objects to mutate. The contract is one-directional information flow.
 - **Adding a new contract is the only way to add a cross-team dependency.** If gameplay needs visual to do something, it goes through this document first. Ad-hoc method calls between team boundaries are not allowed.
 
-## Testing — the actual research output
+## Testing, the actual research output
 
 Two passes:
 
@@ -138,9 +138,9 @@ Black-box test cases verifying each system does what its spec says. Sample:
 
 These verify the systems work; they don't verify the architecture is loose. That's the next pass.
 
-### 2. Coupling analysis — the real test
+### 2. Coupling analysis, the real test
 
-The thesis claim is *empirical*: VContainer + EDA produces lower coupling than the conventional Unity approach. To prove it, I need two implementations of the same gameplay and a side-by-side measurement.
+The thesis claim is empirical. VContainer plus EDA produces lower coupling than the conventional Unity approach. To prove it, I need two implementations of the same gameplay and a side-by-side measurement.
 
 The procedure, written down so it's reproducible:
 
@@ -159,7 +159,7 @@ The win condition was set in devlog #2 and pinned in devlog #7:
 
 If the metrics don't move, that's the result, and I publish it. Devlog #2 already contains the pre-image of every cell I'll be filling in. There's no version of this where I get to quietly redefine "win."
 
-## Design phase — done
+## Design phase, done
 
 Five design artefacts were produced in this phase:
 
@@ -173,4 +173,4 @@ Waterfall says I now move to Implementation with these artefacts as fixed inputs
 
 ## Next
 
-Devlog #13: the first lines of production code. `GameLifetimeScope`, the first interface seam, and the first unit test that runs without a Unity scene.
+Devlog #13 is the first lines of production code. `GameLifetimeScope`, the first interface seam, and the first unit test that runs without a Unity scene.

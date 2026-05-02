@@ -8,34 +8,34 @@ readingTime: 6
 
 ## The internship that broke my codebase brain
 
-I spent a chunk of the last year on a game studio internship. The game shipped, but the codebase shipped a different message: every system knew about every other system. Touch one, three more break. Add a feature, watch unrelated ones regress. Read a stack trace, follow it through five `Manager.Instance` hops before you find the line that actually matters.
+I spent a chunk of the last year on a game studio internship. The game shipped, but the codebase shipped a different message. Every system knew about every other system. Touch one and three more break. Add a feature and watch unrelated ones regress. Read a stack trace and follow it through five `Manager.Instance` hops before you find the line that actually matters.
 
-Release dates slipped. Not because the game design was hard — because the architecture made every change quadratically expensive.
+Release dates slipped. Not because the game design was hard, but because the architecture made every change quadratically expensive.
 
-That experience is what this final-year project is really about. The game on top — **Bloom & Place**, a casual puzzle where you place plants according to their environmental preferences — is the vehicle. The subject is what holds it together underneath.
+That experience is what this final-year project is really about. The game on top is **Bloom & Place**, a casual puzzle where you place plants according to their environmental preferences. The game is the vehicle. The subject is what holds it together underneath.
 
 ## The thing with a name: tight coupling
 
 Tight coupling is when one system depends directly on the implementation details of another. Larry Constantine named it in the late 60s as part of structured design, alongside cohesion, as metrics for software you actually want to maintain. Sixty years later, Unity codebases keep rediscovering it the hard way.
 
-The Unity-specific failure mode goes like this: you need system A to talk to system B, you reach for the closest tool, you make B a singleton, you call `B.Instance.DoThing()` from A. It works. You ship. You do it again. And again. Six months in, every system can call every other system from anywhere, and the call graph is a fully connected mess.
+The Unity-specific failure mode goes like this. You need system A to talk to system B, you reach for the closest tool, you make B a singleton, and you call `B.Instance.DoThing()` from A. It works. You ship. You do it again. And again. Six months in, every system can call every other system from anywhere, and the call graph is a fully connected mess.
 
 Singletons aren't the disease. They're the painkiller you take so you don't have to think about the disease. The disease is that you never decided how systems are supposed to find each other.
 
 ## What I want instead
 
-The plan for Bloom & Place is to combine two ideas that should already be standard but aren't, at least not in indie/academic Unity work:
+The plan for Bloom & Place is to combine two ideas that should already be standard but aren't, at least not in indie or academic Unity work:
 
 1. **Dependency Injection via VContainer.** Plain C# classes as entry points, not MonoBehaviours. Logic separated from view. Lifetime managed by a container, not by `FindObjectOfType` and prayer.
-2. **C# events as the event bus.** No global broadcast singleton. Systems publish events, other systems subscribe — neither side needs to know the other exists.
+2. **C# events as the event bus.** No global broadcast singleton. Systems publish events, other systems subscribe, and neither side needs to know the other exists.
 
-VContainer specifically because it's fast (5–10x resolution speed over Extenject in the public benchmarks, zero-GC during resolution) and because it doesn't force MonoBehaviour inheritance on things that have no business being scene objects.
+I picked VContainer because it's fast (5–10x resolution speed over Extenject in the public benchmarks, zero-GC during resolution) and because it doesn't force MonoBehaviour inheritance on things that have no business being scene objects.
 
 ## Measuring it, not vibing it
 
-The part I care about most: the architecture claim has to be falsifiable. "Cleaner code" is a vibe. Coupling is a number.
+The part I care about most is that the architecture claim has to be falsifiable. "Cleaner code" is a vibe. Coupling is a number.
 
-I'm using Efferent Coupling (Ce) — how many things this module depends on — and Afferent Coupling (Ca) — how many things depend on this module — as the headline metrics. They're old (Robert Martin, 90s), boring, and well understood, which is exactly why they're the right tool. If the loosely coupled version of Bloom & Place doesn't show meaningfully lower Ce/Ca than a naive Singleton-everywhere baseline, I want to know.
+I'm using Efferent Coupling (Ce) and Afferent Coupling (Ca) as the headline metrics. Ce counts how many things a module depends on. Ca counts how many things depend on it. They're old (Robert Martin, 90s), boring, and well understood, which is exactly why they're the right tool. If the loosely coupled version of Bloom & Place doesn't show meaningfully lower Ce/Ca than a naive Singleton-everywhere baseline, I want to know.
 
 That also means I have to actually build the bad version, or at least an honest stand-in for it. I'd rather get punched in the face by my own data than write a thesis where the conclusion was decided in chapter 1.
 
@@ -44,7 +44,7 @@ That also means I have to actually build the bad version, or at least an honest 
 I'm setting expectations for myself, on record, before I write any gameplay code:
 
 - VContainer is the only way systems get hold of each other. No `FindObjectOfType`, no static `Instance` getters in production code.
-- Domain logic (placement rules, plant compatibility, scoring) lives in plain C# classes. MonoBehaviours are view + input only.
+- Domain logic (placement rules, plant compatibility, scoring) lives in plain C# classes. MonoBehaviours are view and input only.
 - Cross-system communication is C# events, exposed via interfaces, wired by the container.
 - Every gameplay system has at least one isolated unit test, no scene required.
 

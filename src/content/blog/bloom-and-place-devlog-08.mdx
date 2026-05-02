@@ -10,11 +10,11 @@ readingTime: 5
 
 When I tell other devs the thesis is structured around a Waterfall SDLC, the reaction is usually "really?" Waterfall has a reputation as the thing people learn in school and then never use. Agile is the default in industry, and rightly so for most product work.
 
-For *this* project, Waterfall is the right model. The reasons stop being academic once you look at what the project actually is.
+For this project, Waterfall is the right model. The reasons stop being academic once you look at what the project actually is.
 
 ## Waterfall's actual strength
 
-Waterfall is a sequential SDLC: each phase is finished before the next begins. The reputation problem is that this sounds rigid, and it is — that's the point. Pargaonkar's 2023 comparative analysis of Agile vs Waterfall puts the case neatly: Waterfall is the predictive-model choice and works best on projects with clear, stable requirements where teams can plan in detail before moving on. Where Agile shines is exactly the opposite — where requirements are emergent and discovered through user contact.
+Waterfall is a sequential SDLC: each phase is finished before the next begins. The reputation problem is that this sounds rigid, and it is. That's the point. Pargaonkar's 2023 comparative analysis of Agile vs Waterfall puts the case neatly: Waterfall is the predictive-model choice and works best on projects with clear, stable requirements where teams can plan in detail before moving on. Where Agile shines is exactly the opposite, where requirements are emergent and discovered through user contact.
 
 This thesis isn't a product hunt for the right feature set. The "user" is the thesis itself, and the requirements were nailed down before any code got written. That's textbook Waterfall territory.
 
@@ -24,7 +24,7 @@ Three things were decided before implementation started:
 
 - **Architectural approach.** Loosely Coupled Architecture using VContainer for DI and C# native events for runtime communication. Decided.
 - **Measurement.** Efferent Coupling, Afferent Coupling, Instability Index, with Stable Dependency Principle as the qualitative check. Decided.
-- **Subject application.** Bloom & Place — a casual puzzle game whose mechanics serve the architecture demonstration, not the other way around. Decided.
+- **Subject application.** Bloom & Place, a casual puzzle game whose mechanics serve the architecture demonstration, not the other way around. Decided.
 
 None of that is up for discovery. There's no point pretending to do iterative requirements-gathering on requirements that already exist on paper.
 
@@ -38,14 +38,14 @@ Waterfall in name only would be a missed opportunity. The phases I'm actually ru
 4. **Testing.** Functional tests for gameplay, plus the Ce/Ca/I measurement pass. The latter is the one that matters for the thesis.
 5. **Maintenance.** Refactor based on the measurement, write up the architecture as a reference for other Unity devs.
 
-That last phase is where the thesis stops being internal and starts being useful to anyone else. The deliverable isn't the game — it's the documented, measured architecture pattern.
+That last phase is where the thesis stops being internal and starts being useful to anyone else. The deliverable isn't the game. It's the documented, measured architecture pattern.
 
 ## Where Agile would have hurt
 
 Two specific places Agile would have made this worse:
 
 - **Moving the goalposts.** Iterative scope means iterative metric definitions. If the Ce target gets renegotiated mid-sprint based on what's convenient, the thesis claim becomes untestable.
-- **No design phase.** Agile's "design emerges from code" works fine for product features. It fails when the design *is* the contribution. You can't measure the impact of an architectural choice that you made implicitly while sprinting.
+- **No design phase.** Agile's "design emerges from code" works fine for product features. It fails when the design is the contribution. You can't measure the impact of an architectural choice that you made implicitly while sprinting.
 
 ## Where Waterfall pinches and I'm fine with it
 
@@ -53,8 +53,8 @@ Waterfall is bad at handling discovery during implementation. If I find during c
 
 ## End of the lit-review burst
 
-That's devlogs #2 through #8. The literature review is the *why* of this project — why the problem is real, why the tools are right, why the metrics are meaningful, why the methodology is appropriate. From here, the devlogs shift from research to construction.
+That's devlogs #2 through #8. The literature review is the why of this project: why the problem is real, why the tools are right, why the metrics are meaningful, why the methodology is appropriate. From here, the devlogs shift from research to construction.
 
 ## Next
 
-Devlog #9 is where the codebase shows up: the initial VContainer LifetimeScope, the first interface seam, and the first domain class that doesn't inherit from anything Unity-shaped.
+Devlog #9 is where the codebase shows up. The initial VContainer LifetimeScope, the first interface seam, and the first domain class that doesn't inherit from anything Unity-shaped.

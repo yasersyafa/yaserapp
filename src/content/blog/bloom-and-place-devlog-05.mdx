@@ -8,9 +8,9 @@ readingTime: 5
 
 ## DI alone is half a solution
 
-A class built with constructor injection still has to do something with its dependencies. If `Plant` is constructed with `IScoreSystem` and then calls `_scoreSystem.AddPoints(10)` whenever it gets placed, I've moved the coupling — I haven't removed it. `Plant` still knows there's a thing called scoring and that it owes points to it.
+A class built with constructor injection still has to do something with its dependencies. If `Plant` is constructed with `IScoreSystem` and then calls `_scoreSystem.AddPoints(10)` whenever it gets placed, I've moved the coupling, not removed it. `Plant` still knows there's a thing called scoring and that it owes points to it.
 
-DI is good at the *shape* of dependencies. It's not the right tool for *occasional cross-system signals*. That's where event-driven architecture earns its keep.
+DI is good at the shape of dependencies. It's not the right tool for occasional cross-system signals. That's where event-driven architecture earns its keep.
 
 ## EDA, in the smallest version that actually helps
 
@@ -27,7 +27,7 @@ public sealed class PlacementEvents {
 
 `Plant` injects `PlacementEvents` and calls `RaisePlanted(...)`. `ScoreSystem` injects `PlacementEvents` and subscribes to `OnPlanted`. Neither references the other. You can delete `ScoreSystem` and the placement code keeps compiling.
 
-That's the whole pattern. It looks underwhelming written out. The leverage shows up the third time you add a feature that needs to react to placements — UI feedback, achievements, tutorial hints. Each one is a new subscriber. Zero edits to `Plant`.
+That's the whole pattern. It looks underwhelming written out. The leverage shows up the third time you add a feature that needs to react to placements: UI feedback, achievements, tutorial hints. Each one is a new subscriber. Zero edits to `Plant`.
 
 ## Why C# native events, not a third-party event bus
 
@@ -37,23 +37,23 @@ Unity has a thriving cottage industry of message bus assets. For Bloom & Place I
 2. **Minimal runtime overhead.** Delegate invocation is cheap and there's no reflection in the hot path.
 3. **The type system catches you.** A typed event means handlers can't quietly subscribe to the wrong shape and silently miss events at runtime. String-keyed buses lose this.
 
-The cost is that I have to define event holder classes per concern. That's fine — it gives me named seams I can inject and test, instead of a single global bus that's just a singleton wearing a mustache.
+The cost is that I have to define event holder classes per concern. That's fine. It gives me named seams I can inject and test, instead of a single global bus that's just a singleton wearing a mustache.
 
-## DI + EDA, the actual combo
+## DI plus EDA, the actual combo
 
 The picture I'm drawing for myself:
 
 - **DI** handles the static graph: who has whom, decided once, at the entry point. Stable, explicit, container-managed.
 - **Events** handle the dynamic graph: who notifies whom, decided per-interaction, at runtime. Fluid, anonymous, fire-and-forget.
 
-DI without events leaves you with chatty interfaces full of "tell me when X happens" methods, which is just the publisher/subscriber pattern done badly. Events without DI leave you with a global bus that everyone reaches for from everywhere — singletons in a trench coat. You need both, and the boundary between them is the thing I want to design carefully.
+DI without events leaves you with chatty interfaces full of "tell me when X happens" methods, which is just the publisher/subscriber pattern done badly. Events without DI leave you with a global bus that everyone reaches for from everywhere, singletons in a trench coat. You need both, and the boundary between them is the thing I want to design carefully.
 
 ## What I'm enforcing
 
 For Bloom & Place specifically:
 
-- Cross-system communication that *must* be synchronous and request/response shaped — interface call via DI.
-- Cross-system communication that's *one-way notification* — event.
+- Cross-system communication that must be synchronous and request/response shaped: interface call via DI.
+- Cross-system communication that's one-way notification: event.
 - Default to events when in doubt. Most "tell ScoreSystem about this" cases turn out to be one-way.
 
 ## Next

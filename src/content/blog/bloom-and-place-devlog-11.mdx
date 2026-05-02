@@ -8,7 +8,7 @@ readingTime: 6
 
 ## Two pictures, one architecture
 
-Loose coupling has two halves. The static half is who knows whom at startup — that's the VContainer binding scheme. The dynamic half is who talks to whom at runtime — that's the event flow. This post is both.
+Loose coupling has two halves. The static half is who knows whom at startup, which is the VContainer binding scheme. The dynamic half is who talks to whom at runtime, which is the event flow. This post is both.
 
 ## Binding scheme
 
@@ -149,7 +149,7 @@ Seven events carry every runtime cross-system signal. Each event has exactly one
 Two patterns repeat across the seven events:
 
 - **Fan-out is normal.** Three of the seven events have multiple subscribers (`OnPlantSelected`, `OnPlantPlaced`, `OnPlantSatisfied`). Each subscriber added is zero edits to the publisher. This is the leverage that makes the architecture worth the upfront work.
-- **Manager-layer systems publish; View-layer systems subscribe.** `VisualFeedbackSystem` appears in subscriber columns four times and never as a publisher. That's correct — view code should react, not initiate.
+- **Manager-layer systems publish, view-layer systems subscribe.** `VisualFeedbackSystem` appears in subscriber columns four times and never as a publisher. That's correct. View code should react, not initiate.
 
 ## Implementation rule, in code
 
@@ -165,11 +165,11 @@ public sealed class PlacementEvents {
 }
 ```
 
-The discipline I'm enforcing on subscribers, written down because this is *the* memory-leak source in C# event code:
+The discipline I'm enforcing on subscribers, written down because this is the memory-leak source in C# event code:
 
 - **Every `+=` has a matching `-=`.** Subscribe in `OnEnable` / constructor, unsubscribe in `OnDisable` / `Dispose`.
 - **No anonymous lambdas as subscribers.** They're impossible to unsubscribe by reference. Always use a named method.
 
 ## Next
 
-Devlog #12: the interface contracts that let two programmers build against each other in parallel without reading each other's code, and the test plan that turns the architecture claim into a measurable result.
+Devlog #12 covers the interface contracts that let two programmers build against each other in parallel without reading each other's code, plus the test plan that turns the architecture claim into a measurable result.

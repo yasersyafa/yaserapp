@@ -12,12 +12,12 @@ The lit-review burst (devlogs #2–#8) ended on methodology. This one starts the
 
 ## The solution, in two complementary halves
 
-Loosely Coupled Architecture for Bloom & Place pairs two techniques that handle different *kinds* of coupling:
+Loosely Coupled Architecture for Bloom & Place pairs two techniques that handle different kinds of coupling:
 
-- **Dependency Injection (VContainer)** — handles the **static** dependency graph. Decided once, at startup, by the container. Every system gets the interfaces it needs by constructor injection. No `FindObjectOfType`, no static `Instance`.
-- **Event-Driven Architecture (C# native events)** — handles **runtime** communication. Systems publish events; other systems subscribe. Neither side knows the other exists.
+- **Dependency Injection (VContainer)** handles the **static** dependency graph. Decided once, at startup, by the container. Every system gets the interfaces it needs by constructor injection. No `FindObjectOfType`, no static `Instance`.
+- **Event-Driven Architecture (C# native events)** handles **runtime** communication. Systems publish events, and other systems subscribe. Neither side knows the other exists.
 
-DI alone leaves you with chatty interfaces full of "tell me when X happens" methods. EDA alone leaves you with a global bus that everyone reaches into. Together they cover both axes — who-knows-whom (DI) and who-talks-to-whom (EDA).
+DI alone leaves you with chatty interfaces full of "tell me when X happens" methods. EDA alone leaves you with a global bus that everyone reaches into. Together they cover both axes: who-knows-whom (DI) and who-talks-to-whom (EDA).
 
 ## The four headline systems
 
@@ -50,7 +50,7 @@ Each one is a plain C# class. None inherits from `MonoBehaviour`. View work (ani
 
 ## Why Waterfall fits this design phase specifically
 
-Devlog #8 made the methodology argument in general. The design phase is where Waterfall's strictness pays off most concretely: the artefacts produced here are *contracts* the implementation phase will consume, and Waterfall's "finish each phase before moving on" rule is what stops me from quietly redrawing a contract halfway through implementation.
+Devlog #8 made the methodology argument in general. The design phase is where Waterfall's strictness pays off most concretely. The artefacts produced here are contracts the implementation phase will consume, and Waterfall's "finish each phase before moving on" rule is what stops me from quietly redrawing a contract halfway through implementation.
 
 The five phases mapped to this thesis:
 
@@ -67,7 +67,7 @@ The five phases mapped to this thesis:
     <li class="grid grid-cols-[3rem_1fr] gap-4 py-5 border-b border-(--line) bg-(--accent)/5 -mx-2 px-2 rounded-lg">
       <div class="text-2xl text-(--accent)">02</div>
       <div>
-        <div class="text-[10px] uppercase tracking-[0.2em] text-(--accent)">System Design — current phase</div>
+        <div class="text-[10px] uppercase tracking-[0.2em] text-(--accent)">System Design · current phase</div>
         <div class="mt-1 text-base text-(--fg)">Design the loosely coupled architecture on paper.</div>
         <div class="mt-1 text-xs text-(--muted)">→ dependency graph, VContainer binding scheme, event flow, interface contracts. Devlogs #10–#12 land here.</div>
       </div>
@@ -103,10 +103,10 @@ The reason I'm marking the design phase outputs explicitly: those four artefacts
 
 ## What the next three devlogs cover
 
-- **#10** — Architecture layers and the dependency graph (before vs after).
-- **#11** — VContainer binding scheme + event flow.
-- **#12** — Interface contracts + testing plan.
+- **#10.** Architecture layers and the dependency graph, before vs after.
+- **#11.** VContainer binding scheme and event flow.
+- **#12.** Interface contracts and testing plan.
 
 ## Next
 
-Devlog #10: the layer hierarchy and what loosely coupled actually changes about the dependency graph.
+Devlog #10 covers the layer hierarchy and what loosely coupled actually changes about the dependency graph.
