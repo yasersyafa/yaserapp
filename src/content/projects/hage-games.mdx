@@ -1,0 +1,73 @@
+---
+title: HAGE Games
+dek: A full-stack platform for hosting and uploading games. .NET on the back end, React on the front end, deployed across Docker, AWS S3, and CloudFront.
+type: web
+year: 2025
+role: Full-Stack Developer
+languages: [TypeScript, "C#"]
+duration: ongoing
+hero: /projects/web-hage.png
+heroAlt: HAGE Games landing page showing a featured pixel adventure game and a popular games grid
+tags: [react, dotnet, aws, docker, devops, fullstack]
+featured: true
+links:
+  source: https://github.com/havengrind/frontend
+  play: https://hagegames.com
+star:
+  situation:
+    body: >-
+      HAGE Games is a website where developers can host and upload their
+      games. The brief covered the full vertical: a public game catalogue, a
+      developer dashboard for uploads and stats, and the back-end plumbing
+      that ties it all together. Hosting actual game builds also meant
+      taking storage and content delivery seriously.
+    points:
+      - Public catalogue plus authenticated developer dashboard
+      - Game build artefacts that need real storage and delivery
+      - First time owning the back end and the deploy pipeline together
+  task:
+    body: >-
+      As Full-Stack Developer I owned the React front end, the .NET back end,
+      and the deployment story. The goal was a production site that other
+      developers could actually upload games to, not a demo with a fake
+      database.
+    points:
+      - React front end with public browse and developer dashboard
+      - .NET back end with auth, uploads, and game metadata APIs
+      - Real deployment, not a localhost demo
+  action:
+    body: >-
+      I built the front end in React with TypeScript and Tailwind, and the
+      back end in .NET. For the infrastructure, I containerised the back end
+      with Docker, deployed onto a VPS, and pushed game build artefacts into
+      AWS S3 with CloudFront in front for content delivery. I also wired up
+      Google Ads on the public catalogue. This was the project that pulled
+      me into back-end work and DevOps in a serious way.
+    points:
+      - React + TypeScript + Tailwind front end
+      - .NET back end handling auth, uploads, and metadata
+      - Docker containerization and VPS deployment
+      - AWS S3 + CloudFront for game build storage and delivery
+      - Google Ads integrated on the public catalogue
+  result:
+    body: >-
+      HAGE Games is live at hagegames.com and is the project that
+      strengthened my back-end and DevOps skills the most. Working through
+      the full chain, code, container, deploy, storage, and CDN, gave me a
+      clearer picture of what shipping a real product actually involves.
+    points:
+      - Live at hagegames.com
+      - End-to-end ownership across front end, back end, and infra
+      - Significant step up in back-end and DevOps confidence
+    metrics:
+      - { label: 'Role', value: 'Full-Stack' }
+      - { label: 'Stack', value: 'React · .NET · Docker · AWS' }
+      - { label: 'Status', value: 'Live, ongoing' }
+---
+
+## Tech notes
+
+- React + TypeScript + Tailwind front end, .NET back end
+- Dockerised back end deployed on a VPS, with AWS S3 + CloudFront for game builds
+- Google Ads integrated on the public catalogue
+- Repos: front end at github.com/havengrind/frontend, back end at github.com/havengrind/backend
