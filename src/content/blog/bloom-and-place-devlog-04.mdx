@@ -1,0 +1,76 @@
+---
+title: "Bloom & Place devlog #4: dependency injection without the enterprise smell"
+dek: DI has a Java-and-XML reputation in the Unity world. Strip the framework theatre away and what's left is a small, mechanical pattern that earns its keep.
+date: 2026-05-02
+tags: [unity, architecture, dependency-injection]
+readingTime: 6
+---
+
+## The pattern, minus the marketing
+
+Dependency Injection is one sentence: a class doesn't construct or look up its own dependencies — they're handed in from outside.
+
+That's the whole thing. The DI container, the IoC container, the binding DSL — all of that is plumbing built around that one rule. The rule itself is small enough to fit in a constructor.
+
+```csharp
+// not DI
+class ScoreSystem {
+  private readonly PlantRegistry _plants = new PlantRegistry();
+  // ScoreSystem now depends on the concrete PlantRegistry forever
+}
+
+// DI
+class ScoreSystem {
+  private readonly IPlantRegistry _plants;
+  public ScoreSystem(IPlantRegistry plants) { _plants = plants; }
+  // ScoreSystem depends on a contract; whoever constructs it picks the implementation
+}
+```
+
+The second version doesn't know what `IPlantRegistry` *is*. It can't. That ignorance is the feature.
+
+## Three flavours, one of them is actually useful
+
+Textbook lists three injection styles:
+
+1. **Constructor injection.** Dependencies passed via constructor. Mandatory, explicit, immutable.
+2. **Method injection.** Dependencies passed into specific methods.
+3. **Property injection.** Dependencies assigned to public properties after construction.
+
+In practice, constructor injection is the one I reach for and the one I'd recommend reaching for. It makes dependencies impossible to forget — the class won't compile without them — and impossible to change at runtime, which kills a whole category of "wait, who set this?" bugs.
+
+Property injection is the one that gets cargo-culted because Unity's `[Inject]` attribute on a public field looks easy. It's the same shape as the singleton-everywhere problem in disguise: the dependency arrives whenever, from wherever, and your test harness has to remember to set it.
+
+## What DI actually buys you
+
+Empirical work backs up the qualitative claims. Sun et al. (2022) measured the relationship between DI usage and coupling across real Java codebases and found that as DI proportion goes up, coupling metrics go down, and maintainability goes up with them. Sun & Liao (2023) confirmed the same direction on a different experimental setup. Sun & Kim (2022, arXiv) specifically targeted the "is the DI hype empirically real?" question and answered yes.
+
+The mechanics, in plain terms:
+
+- **Reuse.** A class that takes `IPlantRegistry` works with any implementation of `IPlantRegistry`. Including one you write later. Including a test fake.
+- **Testability.** The class under test is constructed with whatever dependencies you hand it. No `[SetUp]` ritual hunting for static state to reset.
+- **Parallel dev.** Two devs can build classes that depend on each other if they agree on an interface. Neither one is blocked by the other's implementation being incomplete.
+
+That third one is the one I felt most during the internship: when every class talks to concrete classes, you can't divide the work. Everyone is touching everyone's files.
+
+## "But this is Unity, not enterprise Java"
+
+The pushback I've heard, in roughly the order of how often:
+
+- *"DI is over-engineering for indie."* DI without a framework is three lines: an interface, a constructor parameter, a wiring call at the entry point. The over-engineering is in heavyweight containers, not in the pattern.
+- *"MonoBehaviours can't have constructors."* True, and it's why this matters. Forcing yourself toward DI also forces you toward putting domain logic in plain C# classes that *can* have constructors — which is the architectural improvement the thesis is actually after. MonoBehaviours stay as views and input adapters.
+- *"It's just hiding singletons behind interfaces."* If you bind one interface to one global singleton instance for the lifetime of the app, behaviourally yes. But the call sites no longer encode that decision. You can swap the binding at the entry point without editing call sites. That's the entire point.
+
+## What this looks like in Bloom & Place
+
+The DI rule I'm enforcing on myself, written down so I can't quietly walk it back:
+
+- Domain classes (`Plant`, `Seat`, `ScoreSystem`, placement rules, scoring rules) are plain C# with constructor injection.
+- MonoBehaviours are leaves — view + input only. They get the systems they need injected via VContainer.
+- No `FindObjectOfType`, no `static Instance`, no service-locator method called `Get<T>()` from random code paths.
+
+If I catch myself writing one of those, I'm writing the devlog about *why* I caved before I commit the line.
+
+## Next
+
+Devlog #5: the other half of loose coupling. DI handles who-knows-whom at startup. Events handle who-talks-to-whom at runtime. Why one without the other isn't enough.

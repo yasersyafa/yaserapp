@@ -35,26 +35,26 @@ const jsonLd = {
   <JsonLd slot="head" data={jsonLd} />
 
   <article class="max-w-4xl mx-auto px-5 sm:px-6 pt-12 sm:pt-16 pb-16 sm:pb-20">
-    <a href="/blog/" class="link mono text-sm text-[var(--muted)]">← devlog</a>
+    <a href="/blog/" class="link mono text-sm text-(--muted)">← devlog</a>
 
     <header class="mt-8 sm:mt-10">
-      <p class="mono text-[10px] sm:text-xs uppercase tracking-[0.3em] text-[var(--muted)] reveal flex flex-wrap gap-x-2">
+      <p class="mono text-[10px] sm:text-xs uppercase tracking-[0.3em] text-(--muted) reveal flex flex-wrap gap-x-2">
         <time datetime={dateIso}>{dateStr}</time>
         {readingTime && <span>· {readingTime} min</span>}
         {tags.length > 0 && <span>· {tags.map((t) => `#${t}`).join(' ')}</span>}
       </p>
-      <h1 class="display text-4xl sm:text-7xl mt-4 max-w-3xl reveal" transition:name="page-title">{title}</h1>
-      <p class="text-lg sm:text-2xl italic mt-5 sm:mt-6 max-w-2xl text-[var(--muted)] reveal">{dek}</p>
+      <h1 class="display text-pretty text-4xl sm:text-7xl mt-4 max-w-3xl reveal" transition:name="page-title">{title}</h1>
+      <p class="text-lg text-pretty sm:text-2xl italic mt-5 sm:mt-6 max-w-2xl text-(--muted) reveal">{dek}</p>
     </header>
 
     <hr class="rule mt-8 sm:mt-12" />
 
     <div class="grid grid-cols-1 lg:grid-cols-[12rem_1fr] gap-8 sm:gap-10 mt-8 sm:mt-10">
       <aside class="lg:sticky lg:top-24 lg:self-start mono text-sm">
-        <p class="uppercase tracking-widest text-[var(--muted)] mb-3">On this page</p>
-        <nav id="toc" class="flex flex-col gap-2"></nav>
+        <p class="uppercase tracking-widest text-(--muted) mb-3">On this page</p>
+        <nav id="toc" class="flex text-pretty flex-col gap-2"></nav>
       </aside>
-      <div class="prose-pixel max-w-none [&_h2]:display [&_h2]:text-3xl [&_h2]:mt-14 [&_h2]:mb-4 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mt-8 [&_h3]:mb-3 [&_p]:my-5 [&_pre]:bg-[var(--fg)] [&_pre]:text-[var(--bg)] [&_pre]:p-5 [&_pre]:rounded-xl [&_pre]:overflow-x-auto [&_pre]:my-6 [&_code]:font-mono [&_table]:my-6 [&_th]:text-left [&_th]:border-b [&_th]:border-[var(--line)] [&_th]:p-3 [&_td]:p-3 [&_td]:border-b [&_td]:border-[var(--line)] [&_img]:my-8 [&_img]:rounded-xl [&_a]:link [&_a]:text-[var(--fg)]">
+      <div class="prose-pixel text-pretty text-justify max-w-none [&_h2]:display [&_h2]:text-3xl [&_h2]:mt-14 [&_h2]:mb-4 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mt-8 [&_h3]:mb-3 [&_p]:my-5 [&_pre]:bg-(--fg) [&_pre]:text-(--bg) [&_pre]:p-5 [&_pre]:rounded-xl [&_pre]:overflow-x-auto [&_pre]:my-6 [&_code]:font-mono [&_table]:my-6 [&_th]:text-left [&_th]:border-b [&_th]:border-(--line) [&_th]:p-3 [&_td]:p-3 [&_td]:border-b [&_td]:border-(--line) [&_img]:my-8 [&_img]:rounded-xl [&_a]:link [&_a]:text-(--fg)">
         <slot />
       </div>
     </div>

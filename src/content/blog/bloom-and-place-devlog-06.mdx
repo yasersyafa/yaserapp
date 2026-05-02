@@ -1,0 +1,66 @@
+---
+title: "Bloom & Place devlog #6: why VContainer (and not Zenject)"
+dek: There are real DI frameworks for Unity. I picked the one whose pitch matches what I want the architecture to do — not the one with the biggest tutorial library.
+date: 2026-05-02
+tags: [unity, architecture, vcontainer]
+readingTime: 5
+---
+
+## The shortlist
+
+The two serious DI frameworks in the Unity ecosystem are Zenject (now Extenject) and VContainer. There are smaller ones, but those two are where the documentation, the StackOverflow answers, and the production usage live.
+
+I went with VContainer. Three reasons, in order of how much they actually mattered to my decision.
+
+## 1. Pure C# entry points
+
+VContainer is built specifically to support separating domain logic from presentation. Plain C# classes can be entry points — they don't have to inherit from `MonoBehaviour` to participate in the container's lifecycle.
+
+This sounds like a small thing. It's the most important thing. The whole architectural argument falls over the moment domain logic is forced into MonoBehaviour, because MonoBehaviour drags scene-graph existence, Unity message methods, and a particular construction model into classes that have no business caring about any of that. Letting `ScoreSystem` be a pure C# class with a constructor is what makes the rest of the loosely-coupled story actually work.
+
+Extenject can do this too, but VContainer treats it as the default path. The path of least resistance points the right direction.
+
+## 2. Performance and allocation behaviour
+
+VContainer's public benchmarks claim 5–10x faster resolution than Zenject/Extenject and zero garbage-collection allocation during the resolve path. For a game running at 60+ fps, that second claim matters more than the first — frame-time spikes from allocation pressure are exactly the kind of thing that's invisible during development and embarrassing on the Steam Deck.
+
+I'm not building Bloom & Place to chase microbenchmarks. The container resolves once at startup and that's mostly it. But "fast and zero-alloc" beats "slower and allocates" with no other variables changed, so the choice is free.
+
+## 3. The smaller, sharper API
+
+Zenject grew over many years and the API surface shows it. Multiple ways to do the same thing, lots of magic. VContainer is more recent, opinionated, and small enough that I read most of the docs in a sitting. Less to learn, less to misuse.
+
+## LifetimeScope, the one concept you must internalise
+
+The central VContainer concept is `LifetimeScope`: a class that defines a DI container's contents and the lifetime of those contents. You subclass it, override `Configure(IContainerBuilder builder)`, and register your systems inside.
+
+```csharp
+public sealed class GameLifetimeScope : LifetimeScope {
+  protected override void Configure(IContainerBuilder builder) {
+    builder.Register<IScoreSystem, ScoreSystem>(Lifetime.Singleton);
+    builder.Register<IPlantRegistry, PlantRegistry>(Lifetime.Singleton);
+    builder.Register<PlacementEvents>(Lifetime.Singleton);
+    builder.RegisterEntryPoint<GameLoop>();
+  }
+}
+```
+
+Three lifetimes are available, and getting them right is most of the design work:
+
+- **Singleton.** One instance for the lifetime of the container. Use for systems that own state shared across the whole game (`ScoreSystem`, `PlantRegistry`).
+- **Scoped.** One instance per scope. Use when you have nested scopes — e.g. a level scope that should reset between levels.
+- **Transient.** A new instance per resolve. Use for objects that legitimately have no shared state.
+
+The default I'm starting with: most domain systems are singletons inside a single root `LifetimeScope`. Nested scopes get introduced only when I have a concrete reason — usually "this thing should die when the level does."
+
+## What I'm not doing
+
+A few anti-patterns to flag for myself, since this is where projects quietly slip back into the singleton swamp:
+
+- **No service-locator wrapper.** I'm not exposing the container as `Locator.Get<T>()` from random code. That's a singleton with extra steps.
+- **No `[Inject]` on public fields.** Constructor injection only on plain C# classes; method injection on MonoBehaviours where it's unavoidable.
+- **No "just one" `static`.** The first `static` cache is always the one. There won't be one.
+
+## Next
+
+Devlog #7: how I'm measuring whether any of this worked. Ce, Ca, the Instability Index, and why the formula on its own isn't enough.

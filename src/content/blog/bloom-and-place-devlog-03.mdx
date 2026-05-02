@@ -1,0 +1,43 @@
+---
+title: "Bloom & Place devlog #3: a 1968 problem still eating Unity codebases"
+dek: Constantine named coupling and cohesion before most game engines existed. Sixty years on, Unity projects keep rediscovering the same trap.
+date: 2026-05-02
+tags: [unity, architecture, theory]
+readingTime: 5
+---
+
+## The word matters
+
+"Coupling" gets thrown around in code review like it's a vibe. It isn't. Larry Constantine introduced coupling and cohesion as concrete software-quality metrics in the late 1960s, as part of structured design. The point was specifically to drive down maintenance and modification cost. That goal hasn't changed; only the languages have.
+
+Coupling, in one sentence: how strongly one module depends on another. That's it. Two modules where changing one forces a change to the other are tightly coupled. Two modules where you can rewrite one without touching the other are loosely coupled. Everything else in this devlog series is about how to live on the loose end of that scale on purpose.
+
+## Tight coupling, the failure mode I keep meeting
+
+Tight coupling is consistently called out as one of the most serious problems in software engineering, because it directly causes the thing teams complain about most: change is expensive. When changing component A *requires* changing component B, A and B are tightly coupled by definition. The system gets brittle, hard to maintain, and hard to develop in parallel — three programmers can't safely touch a tangled call graph at the same time.
+
+You don't have to look hard for examples in Unity. The classic shape is `SystemA.Instance.DoThing()` called from anywhere. Every static call site is a piece of knowledge wedged into a place that didn't need it. Move the method, rename the manager, change the signature — half the codebase lights up.
+
+## Loose coupling, the goal
+
+The textbook definition of loose coupling is symmetric: each component is designed to depend on as little external machinery as possible. The practical definition I prefer: a component can be rewritten or replaced without forcing changes elsewhere.
+
+What you get when you live there:
+
+- **Maintenance.** Bugs and refactors are local. You touch one module, you re-test that module.
+- **Extension.** New features land as new modules instead of edits to ten existing ones.
+- **Scale.** Modules can be added without disturbing the working ones.
+
+These read as marketing bullet points until you've tried to ship something the other way. After my internship I no longer find them aspirational — they're the difference between making a deadline and missing one.
+
+## Why "modular" isn't enough
+
+Here's the trap I want to flag early, because it caught me in the prototype: splitting code into modules doesn't automatically buy you loose coupling. If module B's public API leaks the existence of three of B's collaborators, A using B still drags in those three. Modular boundaries help only when the dependencies between modules are *explicit and controlled*. That's what dependency injection and event-driven architecture exist to enforce — and it's why the next two devlogs are about each in turn.
+
+## The thesis hook
+
+The whole research thrust here is: coupling is a measurable property, not a taste. Sixty years of structured design says the same thing. Bloom & Place is the lab; the Ce/Ca numbers I posted in devlog #2 are the dial; VContainer + C# events are the controls. If the dial doesn't move, the controls don't work — and that's a result, even if it's not the one I'm hoping for.
+
+## Next
+
+Devlog #4: dependency injection. What it is, what the three injection styles actually buy you, and why the "DI is just enterprise Java cruft" reaction is wrong about Unity.

@@ -1,0 +1,66 @@
+---
+title: "Bloom & Place devlog #7: the yardstick — Ce, Ca, and instability"
+dek: Three metrics from Robert Martin, one formula, and the discipline that keeps the formula honest.
+date: 2026-05-02
+tags: [unity, architecture, metrics]
+readingTime: 5
+---
+
+## The three numbers
+
+To make the architecture claim falsifiable I need a measurement that doesn't depend on my taste. The metrics I'm using come from Robert C. Martin's *Agile Software Development: Principles, Patterns, and Practices*, and they're simple enough to compute by hand for a class:
+
+- **Efferent Coupling (Ce).** How many external classes does this class know about?
+- **Afferent Coupling (Ca).** How many external classes know about this one?
+- **Instability Index (I).** `I = Ce / (Ce + Ca)`. Range: 0.00 to 1.00.
+
+Ce is the outgoing arrow count. Ca is the incoming arrow count. I is the ratio of "I depend on the world" to "the world depends on me."
+
+## Reading the index correctly
+
+I = 0.00 means: nothing this class depends on, lots of classes depend on it. Maximally stable. The classic shape of a data-layer class or a foundational interface — the kind of thing you absolutely don't want to change because a change here ripples outward.
+
+I = 1.00 means: depends on lots of things, nothing depends on it. Maximally unstable. Which sounds bad, but it's *correct* for leaf-level classes — view code, input adapters, the outermost layer. Of course they depend on the world; that's their job.
+
+The trap is reading the number without context. A view class with I = 1.0 is fine. A core domain class with I = 1.0 is a fire. Same number, opposite verdicts. The index is a flag for asking "is this the right shape for this class's role?", not a score to minimise globally.
+
+## The Stable Dependency Principle
+
+The discipline that keeps the metric honest is the Stable Dependency Principle: dependencies should always flow from less-stable classes toward more-stable ones. Put another way — high-I classes can depend on low-I classes; low-I classes should *not* depend on high-I classes.
+
+The `Seat.OnMouseDown` line I confessed in devlog #2 is exactly this violation. `Seat` is core gameplay state (should be stable, low I). `PlantSelectionManager` is a manager (less stable, higher I). The arrow goes from Seat into PlantSelectionManager — from the more stable into the less stable. SDP says that arrow shouldn't exist.
+
+A Ce=5 on `Plant` is bad on its own. A Ce=5 on `Plant` *plus* the fact that some of those five dependencies are less stable than `Plant` is what makes it actually painful to maintain.
+
+## How I'm computing this for the thesis
+
+For the thesis baseline and the post-refactor measurement, I'm taking:
+
+1. **Ce per class** — counted statically by following type references in the source.
+2. **Ca per class** — derived by inverting the same graph.
+3. **I per class** — computed from the above.
+4. **Architecture position per class** — labelled by hand as core / manager / view, based on responsibility.
+5. **SDP violations** — every edge that goes from low-I role to high-I role.
+
+The headline numbers will be aggregate Ce reductions and SDP violation counts. But the per-class breakdown is what makes the result believable, because it surfaces cases where the average looks fine while a key class quietly got worse.
+
+## The tooling
+
+I'm not building a custom analyser. NDepend and Roslyn-based tools already compute Ce/Ca/I across a C# project. The thesis contribution is the *architectural method*, not the metric — there's no value in reinventing the measurement layer.
+
+What I will document carefully: which tool, which version, which configuration, which exclusion rules. Reproducibility matters more here than novelty.
+
+## What "win" looks like
+
+For the architecture refactor to count as a win, the following has to be true on the post-refactor codebase relative to the baseline:
+
+- Aggregate Ce on domain classes drops meaningfully.
+- The specific high-Ce classes called out in devlog #2 (`Plant`, in particular) drop into a healthier range.
+- Zero SDP violations involving core domain classes.
+- `ScoreManager`'s I drops toward the low end — it should be a sink, not a reach-outer.
+
+If those don't move, the architecture claim is wrong, and that's a finding. The whole point of writing this down ahead of time is so I can't quietly redefine "win" later.
+
+## Next
+
+Devlog #8 is the last one in this lit-review burst — why I picked Waterfall over Agile for this thesis, and why the choice is less stuffy than it sounds.
