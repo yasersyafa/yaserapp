@@ -1,0 +1,176 @@
+---
+title: "Bloom & Place devlog #12: interface contracts and the test plan"
+dek: The interfaces two programmers agreed on before either wrote any code, plus the test plan that turns the architecture claim into a measurable outcome.
+date: 2026-05-02
+tags: [unity, architecture, testing]
+readingTime: 6
+---
+
+## Why interface contracts exist on this project
+
+Bloom & Place is being built by two programmers — a gameplay programmer (me) and a visual programmer. Without contracts, that splits two ways: either we serialise the work (one waits while the other ships), or we both build against assumptions and find out at integration that they didn't match.
+
+Interface contracts kill that. Each interface is a typed agreement: *whoever implements this exposes these members, and whoever consumes it can rely on them*. Implementer and consumer can develop in parallel. Neither needs to read the other's code.
+
+This is the same DI argument I made in devlog #4, applied at the team-process level. DI buys parallel development; interface contracts are the document that makes the parallelism real.
+
+## The four contracts
+
+<div class="not-prose my-8 font-mono space-y-3">
+  <div class="rounded-2xl border border-(--line) overflow-hidden">
+    <div class="px-5 py-4 border-b border-(--line) flex items-baseline gap-3">
+      <span class="text-[10px] uppercase tracking-[0.2em] text-(--accent)">Contract 01</span>
+      <span class="text-base text-(--fg)">IPlantSelectable</span>
+      <span class="text-xs text-(--muted)">— player-input</span>
+    </div>
+    <div class="grid sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-(--line) text-sm">
+      <div class="p-5">
+        <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Members</div>
+        <div class="mt-2 text-(--fg) leading-relaxed">SetSelected(bool)<br/>event OnPlantClicked<br/>event OnPlantSelected</div>
+      </div>
+      <div class="p-5">
+        <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Implemented by</div>
+        <div class="mt-2 text-(--fg)">Plant</div>
+        <div class="text-xs text-(--muted)">Gameplay programmer</div>
+      </div>
+      <div class="p-5">
+        <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Consumed by</div>
+        <div class="mt-2 text-(--fg)">VisualFeedbackSystem</div>
+        <div class="text-xs text-(--muted)">Visual programmer</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rounded-2xl border border-(--line) overflow-hidden">
+    <div class="px-5 py-4 border-b border-(--line) flex items-baseline gap-3">
+      <span class="text-[10px] uppercase tracking-[0.2em] text-(--accent)">Contract 02</span>
+      <span class="text-base text-(--fg)">ISatisfactionFeedback</span>
+      <span class="text-xs text-(--muted)">— satisfaction-result</span>
+    </div>
+    <div class="grid sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-(--line) text-sm">
+      <div class="p-5">
+        <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Members</div>
+        <div class="mt-2 text-(--fg) leading-relaxed">event OnPlantSatisfied(PlantData)<br/>event OnPlantDissatisfied(PlantData)</div>
+      </div>
+      <div class="p-5">
+        <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Implemented by</div>
+        <div class="mt-2 text-(--fg)">SatisfactionSystem</div>
+        <div class="text-xs text-(--muted)">Gameplay programmer</div>
+      </div>
+      <div class="p-5">
+        <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Consumed by</div>
+        <div class="mt-2 text-(--fg)">VisualFeedbackSystem</div>
+        <div class="text-xs text-(--muted)">Visual programmer</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rounded-2xl border border-(--line) overflow-hidden">
+    <div class="px-5 py-4 border-b border-(--line) flex items-baseline gap-3">
+      <span class="text-[10px] uppercase tracking-[0.2em] text-(--accent)">Contract 03</span>
+      <span class="text-base text-(--fg)">IPlacementFeedback</span>
+      <span class="text-xs text-(--muted)">— placement-events</span>
+    </div>
+    <div class="grid sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-(--line) text-sm">
+      <div class="p-5">
+        <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Members</div>
+        <div class="mt-2 text-(--fg) leading-relaxed">event OnPlantPlaced(Plant, Seat)<br/>event OnPlantRemoved(Plant)</div>
+      </div>
+      <div class="p-5">
+        <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Implemented by</div>
+        <div class="mt-2 text-(--fg)">PlacementSystem</div>
+        <div class="text-xs text-(--muted)">Gameplay programmer</div>
+      </div>
+      <div class="p-5">
+        <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Consumed by</div>
+        <div class="mt-2 text-(--fg)">VisualFeedbackSystem</div>
+        <div class="text-xs text-(--muted)">Visual programmer</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rounded-2xl border border-(--line) overflow-hidden">
+    <div class="px-5 py-4 border-b border-(--line) flex items-baseline gap-3">
+      <span class="text-[10px] uppercase tracking-[0.2em] text-(--accent)">Contract 04</span>
+      <span class="text-base text-(--fg)">ILevelFeedback</span>
+      <span class="text-xs text-(--muted)">— level-state</span>
+    </div>
+    <div class="grid sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-(--line) text-sm">
+      <div class="p-5">
+        <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Members</div>
+        <div class="mt-2 text-(--fg) leading-relaxed">event OnLevelComplete<br/>event OnLevelFailed</div>
+      </div>
+      <div class="p-5">
+        <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Implemented by</div>
+        <div class="mt-2 text-(--fg)">LevelSystem</div>
+        <div class="text-xs text-(--muted)">Gameplay programmer</div>
+      </div>
+      <div class="p-5">
+        <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Consumed by</div>
+        <div class="mt-2 text-(--fg)">UISystem</div>
+        <div class="text-xs text-(--muted)">Visual programmer</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+Three observations from the contracts:
+
+- **Every contract is event-shaped, not method-shaped.** All four interfaces expose events; only `IPlantSelectable` exposes a single method. The visual programmer reacts to things; they don't drive things. That asymmetry is the contract enforcing the layer hierarchy from devlog #10.
+- **The visual programmer never sees concrete gameplay types.** They subscribe to events that pass `PlantData` or `Plant` references — but only as read-only lookups, never as objects to mutate. The contract is one-directional information flow.
+- **Adding a new contract is the only way to add a cross-team dependency.** If gameplay needs visual to do something, it goes through this document first. Ad-hoc method calls between team boundaries are not allowed.
+
+## Testing — the actual research output
+
+Two passes:
+
+### 1. Functional tests
+
+Black-box test cases verifying each system does what its spec says. Sample:
+
+| ID    | System              | Scenario                                                           | Expected output                                                                  | Precondition                                  | Status      |
+| ----- | ------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------- | --------------------------------------------- | ----------- |
+| TC-01 | `PlacementSystem`   | Plant placed in a valid slot                                       | Plant moves to slot; `OnPlantPlaced` published                                   | Slot empty and valid                          | Pass / Fail |
+| TC-02 | `SatisfactionSystem`| Matching plant in matching slot                                    | `SatisfactionScore = 1.0`; `OnPlantSatisfied` published                          | Plant placed in slot matching its preference  | Pass / Fail |
+| TC-03 | `SatisfactionSystem`| Mismatched plant in mismatched slot                                | `SatisfactionScore = 0.0`; `OnPlantDissatisfied` published                       | Plant placed in slot not matching preference  | Pass / Fail |
+| TC-04 | `LevelSystem`       | All plants satisfied                                               | `OnLevelComplete` published; scene transitions to next level                     | All slots filled and all plants satisfied     | Pass / Fail |
+| TC-05 | Event flow          | `OnPlantSatisfied` is received by `VisualFeedbackSystem`           | Happy animation plays after event received                                       | Plant placed at preferred position            | Pass / Fail |
+
+These verify the systems work; they don't verify the architecture is loose. That's the next pass.
+
+### 2. Coupling analysis — the real test
+
+The thesis claim is *empirical*: VContainer + EDA produces lower coupling than the conventional Unity approach. To prove it, I need two implementations of the same gameplay and a side-by-side measurement.
+
+The procedure, written down so it's reproducible:
+
+1. **Build a class diagram for each version** (non-DI baseline + VContainer/EDA target).
+2. **For every system class, count Ce.** Only count external types that aren't Unity built-in, primitive, or generic.
+3. **For every system class, derive Ca** by inverting the dependency graph.
+4. **Compute Instability** with `I = Ce / (Ce + Ca)`.
+5. **Tabulate side-by-side** and look for the deltas.
+
+The win condition was set in devlog #2 and pinned in devlog #7:
+
+- Aggregate Ce on domain classes drops meaningfully.
+- Specific high-Ce classes called out in the baseline (`Plant`, `ScoreManager`) hit their targets from the after-table.
+- Zero SDP violations involving core domain classes.
+- `ScoreManager`'s I drops toward the low end of the manager range.
+
+If the metrics don't move, that's the result, and I publish it. Devlog #2 already contains the pre-image of every cell I'll be filling in. There's no version of this where I get to quietly redefine "win."
+
+## Design phase — done
+
+Five design artefacts were produced in this phase:
+
+1. Layer hierarchy (devlog #10).
+2. Dependency graph, before and after (devlog #10).
+3. VContainer binding scheme (devlog #11).
+4. Event flow (devlog #11).
+5. Interface contracts + test plan (this post).
+
+Waterfall says I now move to Implementation with these artefacts as fixed inputs. If implementation discovers a real gap, I'll document the design revision openly rather than rewriting these posts to make the gap disappear.
+
+## Next
+
+Devlog #13: the first lines of production code. `GameLifetimeScope`, the first interface seam, and the first unit test that runs without a Unity scene.

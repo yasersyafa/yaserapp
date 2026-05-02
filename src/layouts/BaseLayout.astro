@@ -59,8 +59,16 @@ const ogImageUrl = new URL(ogImage, site.url).toString();
     <script is:inline>
       (function () {
         const k = 'yaser-theme';
-        const v = localStorage.getItem(k);
-        if (v === 'dark' || v === 'light') document.documentElement.dataset.theme = v;
+        const apply = () => {
+          const v = localStorage.getItem(k);
+          if (v === 'dark' || v === 'light') {
+            document.documentElement.dataset.theme = v;
+          } else {
+            delete document.documentElement.dataset.theme;
+          }
+        };
+        apply();
+        document.addEventListener('astro:after-swap', apply);
       })();
     </script>
   </head>

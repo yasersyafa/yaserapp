@@ -1,0 +1,112 @@
+---
+title: "Bloom & Place devlog #9: solution shape and the Waterfall plan"
+dek: With the literature review done, the design phase opens. Here's the shape of the solution and the five-phase Waterfall plan I'm running it on.
+date: 2026-05-02
+tags: [unity, architecture, design]
+readingTime: 5
+---
+
+## Out of research, into design
+
+The lit-review burst (devlogs #2–#8) ended on methodology. This one starts the System Design phase. Two things to nail down before I touch any production code: what the solution actually is, and the Waterfall plan it runs on.
+
+## The solution, in two complementary halves
+
+Loosely Coupled Architecture for Bloom & Place pairs two techniques that handle different *kinds* of coupling:
+
+- **Dependency Injection (VContainer)** — handles the **static** dependency graph. Decided once, at startup, by the container. Every system gets the interfaces it needs by constructor injection. No `FindObjectOfType`, no static `Instance`.
+- **Event-Driven Architecture (C# native events)** — handles **runtime** communication. Systems publish events; other systems subscribe. Neither side knows the other exists.
+
+DI alone leaves you with chatty interfaces full of "tell me when X happens" methods. EDA alone leaves you with a global bus that everyone reaches into. Together they cover both axes — who-knows-whom (DI) and who-talks-to-whom (EDA).
+
+## The four headline systems
+
+The game itself is a casual placement puzzle: plants want specific environmental conditions, the player slots them into seats, the level resolves when every plant is satisfied. Underneath, four domain systems carry the load.
+
+<div class="not-prose my-8 grid sm:grid-cols-2 gap-3 font-mono text-sm">
+  <div class="rounded-2xl border border-(--line) p-5 hover:border-(--accent) transition-colors">
+    <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">01</div>
+    <div class="mt-2 text-base text-(--fg)">CharacterSystem</div>
+    <div class="mt-2 text-xs leading-relaxed text-(--muted)">Plant data, identity, lookup.</div>
+  </div>
+  <div class="rounded-2xl border border-(--line) p-5 hover:border-(--accent) transition-colors">
+    <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">02</div>
+    <div class="mt-2 text-base text-(--fg)">PlacementSystem</div>
+    <div class="mt-2 text-xs leading-relaxed text-(--muted)">Placement rules, seat occupancy, valid moves.</div>
+  </div>
+  <div class="rounded-2xl border border-(--line) p-5 hover:border-(--accent) transition-colors">
+    <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">03</div>
+    <div class="mt-2 text-base text-(--fg)">SatisfactionSystem</div>
+    <div class="mt-2 text-xs leading-relaxed text-(--muted)">Plant-vs-seat preference scoring.</div>
+  </div>
+  <div class="rounded-2xl border border-(--line) p-5 hover:border-(--accent) transition-colors">
+    <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">04</div>
+    <div class="mt-2 text-base text-(--fg)">LevelSystem</div>
+    <div class="mt-2 text-xs leading-relaxed text-(--muted)">Win/lose conditions, level transitions.</div>
+  </div>
+</div>
+
+Each one is a plain C# class. None inherits from `MonoBehaviour`. View work (animations, particles, UI feedback) lives in MonoBehaviours that subscribe to events from the systems above.
+
+## Why Waterfall fits this design phase specifically
+
+Devlog #8 made the methodology argument in general. The design phase is where Waterfall's strictness pays off most concretely: the artefacts produced here are *contracts* the implementation phase will consume, and Waterfall's "finish each phase before moving on" rule is what stops me from quietly redrawing a contract halfway through implementation.
+
+The five phases mapped to this thesis:
+
+<div class="not-prose my-8 font-mono text-sm">
+  <ol class="space-y-0">
+    <li class="grid grid-cols-[3rem_1fr] gap-4 py-5 border-b border-(--line)">
+      <div class="text-2xl text-(--muted)">01</div>
+      <div>
+        <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Requirements Analysis</div>
+        <div class="mt-1 text-base text-(--fg)">Identify the tight-coupling problem; lock the metric set.</div>
+        <div class="mt-1 text-xs text-(--muted)">→ required system list, Ca/Ce/I as the measurement standard.</div>
+      </div>
+    </li>
+    <li class="grid grid-cols-[3rem_1fr] gap-4 py-5 border-b border-(--line) bg-(--accent)/5 -mx-2 px-2 rounded-lg">
+      <div class="text-2xl text-(--accent)">02</div>
+      <div>
+        <div class="text-[10px] uppercase tracking-[0.2em] text-(--accent)">System Design — current phase</div>
+        <div class="mt-1 text-base text-(--fg)">Design the loosely coupled architecture on paper.</div>
+        <div class="mt-1 text-xs text-(--muted)">→ dependency graph, VContainer binding scheme, event flow, interface contracts. Devlogs #10–#12 land here.</div>
+      </div>
+    </li>
+    <li class="grid grid-cols-[3rem_1fr] gap-4 py-5 border-b border-(--line)">
+      <div class="text-2xl text-(--muted)">03</div>
+      <div>
+        <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Implementation</div>
+        <div class="mt-1 text-base text-(--fg)">Code the four systems against the design, plus a non-DI version for comparison.</div>
+        <div class="mt-1 text-xs text-(--muted)">→ CharacterSystem, PlacementSystem, SatisfactionSystem, LevelSystem; non-DI baseline.</div>
+      </div>
+    </li>
+    <li class="grid grid-cols-[3rem_1fr] gap-4 py-5 border-b border-(--line)">
+      <div class="text-2xl text-(--muted)">04</div>
+      <div>
+        <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Testing</div>
+        <div class="mt-1 text-base text-(--fg)">Functional tests + the coupling analysis pass.</div>
+        <div class="mt-1 text-xs text-(--muted)">→ test-case table, side-by-side Ca/Ce/I comparison (DI vs non-DI).</div>
+      </div>
+    </li>
+    <li class="grid grid-cols-[3rem_1fr] gap-4 py-5">
+      <div class="text-2xl text-(--muted)">05</div>
+      <div>
+        <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Maintenance</div>
+        <div class="mt-1 text-base text-(--fg)">Refactor based on the data; finalise documentation.</div>
+        <div class="mt-1 text-xs text-(--muted)">→ playable build, full technical writeup, architecture as a reference.</div>
+      </div>
+    </li>
+  </ol>
+</div>
+
+The reason I'm marking the design phase outputs explicitly: those four artefacts are the deliverables the rest of the thesis depends on. If any of them is wrong, every later phase compounds the mistake.
+
+## What the next three devlogs cover
+
+- **#10** — Architecture layers and the dependency graph (before vs after).
+- **#11** — VContainer binding scheme + event flow.
+- **#12** — Interface contracts + testing plan.
+
+## Next
+
+Devlog #10: the layer hierarchy and what loosely coupled actually changes about the dependency graph.

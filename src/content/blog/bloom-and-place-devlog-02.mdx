@@ -10,17 +10,42 @@ readingTime: 5
 
 Last post I committed to a falsifiable architecture claim. That only works if the "before" picture is real — not a strawman I cooked up to make the after look good. So before touching VContainer, I ran Ce/Ca over the existing prototype as it stands today.
 
+## A quick refresher on the metrics
+
+Three numbers, all from Robert C. Martin's _Agile Software Development: Principles, Patterns, and Practices_. Devlog #7 goes deep on these — short version below so this post stands on its own.
+
+- **Efferent Coupling (`Ce`).** Outgoing arrows. How many other classes does this class depend on? Count the distinct external types it references by name. High Ce = "this class knows about a lot of stuff and breaks when any of it changes."
+- **Afferent Coupling (`Ca`).** Incoming arrows. How many other classes depend on this one? High Ca = "lots of code will break if I change this class."
+- **Instability Index (`I`).** Ratio of outgoing to total. `I = Ce / (Ce + Ca)`, range 0.00 to 1.00. `I = 0` means stable (depended on but doesn't reach out). `I = 1` means unstable (reaches out but nothing depends on it). Neither extreme is universally good or bad — it depends on the class's role. Foundation/data classes should be near 0; view leaves can sit at 1.
+
+The Stable Dependency Principle ties them together: dependencies should always flow from less stable (high I) toward more stable (low I). When a high-I class depends on a low-I class, that's correct. When a low-I core class reaches into a high-I manager, that's the violation worth hunting for.
+
 ## The headline numbers
 
-| Class | Ce | Ca | I | Notes |
-|---|---|---|---|---|
-| `Plant` | 5 | — | — | depends on `Seat`, `PlantPreference`, `PlantOutlineHover`, `PlantSelectionManager`, `CustomCursorManager` |
-| `ScoreManager` | — | — | 0.75 | near the unstable end of the scale |
-| `Seat` | — | — | — | calls `PlantSelectionManager.Instance` directly from `OnMouseDown()` |
+Computed across every script in the prototype. `I = Ce / (Ce + Ca)`, range 0.00 (stable) to 1.00 (unstable). Verdict column is whether the I value is _appropriate for that class's architectural role_ — not just whether the number is low.
 
-`Plant` has Ce = 5. Five separate concrete classes it knows about by name. That's the symptom — every time I touched plant behaviour I was implicitly touching five other systems' assumptions.
+| Class                   | Layer      | Ce  | Ca  | I    | Status         | Verdict         |
+| ----------------------- | ---------- | --- | --- | ---- | -------------- | --------------- |
+| `Plant`                 | Core       | 5   | 4   | 0.56 | Unstable       | Borderline      |
+| `PlantSelectionManager` | Manager    | 3   | 2   | 0.60 | Unstable       | Borderline      |
+| `ScoreManager`          | Manager    | 3   | 1   | 0.75 | Very unstable  | Unhealthy       |
+| `Seat`                  | Core       | 2   | 3   | 0.40 | Fairly stable  | Healthy (watch) |
+| `PlantParticleEffect`   | View       | 1   | 0   | 1.00 | Fully unstable | Healthy         |
+| `CustomCursorManager`   | Foundation | 0   | 2   | 0.00 | Fully stable   | Healthy         |
+| `PlantOutlineHover`     | Foundation | 0   | 1   | 0.00 | Fully stable   | Healthy         |
+| `PlantPreference`       | Data       | 0   | 2   | 0.00 | Fully stable   | Healthy         |
+| `SeatTag`               | Data       | 0   | 2   | 0.00 | Fully stable   | Healthy         |
 
-`ScoreManager`'s instability is 0.75. Not catastrophic on paper, but for a class that everyone's supposed to depend *on* (it's a sink — score data flows toward it), I want it closer to 0. Today it's reaching outward more than it's being reached inward, which is the wrong shape for that role.
+Reading the table by row, in the order the verdicts hurt most:
+
+- **`ScoreManager` — Unhealthy.** Manager-layer classes can sit at I ≤ 0.60 without alarm. 0.75 is over the line. Three outgoing dependencies (`Seat`, `Plant`, `PreferenceChecker`) and only one incoming (`PlantSelectionManager`). It's reaching outward more than it's being reached inward, which is the wrong shape for a class that's supposed to be a score _sink_.
+- **`Plant` — Borderline.** Core-layer classes should sit at I ≤ 0.40. `Plant` is at 0.56. The Ce list is the giveaway: `Seat`, `PlantPreference`, `PlantOutlineHover`, `PlantSelectionManager`, `CustomCursorManager`. Two of those (the managers) are _higher_ in the architecture than `Plant`. Core reaching upward into managers — wrong direction.
+- **`PlantSelectionManager` — Borderline.** I = 0.60 is on the edge of acceptable for a manager. The real problem isn't the number, it's that `PlantSelectionManager` and `Plant` have a circular dependency: each one knows about the other. That breaks Acyclic Dependencies Principle outright.
+- **`Seat` — Healthy on paper, watch in practice.** I = 0.40 is fine for core. But `Seat.OnMouseDown` calls `PlantSelectionManager.Instance` directly, which is the SDP-violation arrow that doesn't show up in the raw I number — it shows up when you ask _which layer is each dependency from?_
+- **Foundation + Data layers — all Healthy.** Ce = 0 across the board. They depend on nothing and get depended on. Exactly the shape you want at the bottom of the architecture.
+- **`PlantParticleEffect` — Healthy despite I = 1.00.** Leaf node, view layer. I = 1.00 is correct for view code. The metric only flags this if you read it without context.
+
+The lesson the table teaches in one sentence: the bad numbers cluster in the middle of the architecture, not at the edges.
 
 ## The line I'm most embarrassed by
 
@@ -45,11 +70,18 @@ Two: writing the baseline down forces me to commit to it. The Ce/Ca for `Plant` 
 
 ## What I want the after-table to look like
 
-I'm not picking exact targets yet — that's the kind of thing you cherry-pick toward. The qualitative goals:
+Targets, written down before any refactor lands so I can't shift them later:
 
-- `Plant` Ce drops by depending on **interfaces** wired by VContainer, not concrete classes scattered across the project.
-- `ScoreManager` becomes a passive sink — other systems publish `ScoreChanged` events to it, it doesn't reach out.
-- The `Seat.OnMouseDown` line stops calling any `.Instance` at all. Selection becomes an event the seat publishes, not a method it calls on a manager.
+| Class                   | Ce now | Ce target | I Now | I Target  | How                                                                                          |
+| ----------------------- | ------ | --------- | ----- | --------- | -------------------------------------------------------------------------------------------- |
+| `Plant`                 | 5      | 2–3       | 0.56  | 0.25–0.35 | Drop direct deps on `PlantSelectionManager` and `CustomCursorManager`, replace with events   |
+| `PlantSelectionManager` | 3      | 3         | 0.60  | ~0.60     | Number can stay; kill the circular dependency with `Plant`                                   |
+| `ScoreManager`          | 3      | 2         | 0.75  | 0.50–0.60 | Inject via VContainer, remove static `Instance`, become a pure event subscriber              |
+| `Seat`                  | 2      | 1         | 0.40  | 0.20–0.30 | Remove `PlantSelectionManager` call from `OnMouseDown`; publish a seat-clicked event instead |
+
+Foundation- and Data-layer classes (`CustomCursorManager`, `PlantOutlineHover`, `PlantPreference`, `SeatTag`) already sit at I = 0.00. The refactor shouldn't move them. If Ce on any of those goes above 0, that's a regression I have to explain.
+
+`PlantParticleEffect` is allowed to stay at I = 1.00. It's a view leaf and that's the right shape for a view leaf.
 
 ## Next
 
