@@ -7,42 +7,102 @@ function initCursor() {
 
   const dot = document.createElement('div');
   dot.id = 'cursor-dot';
+  dot.innerHTML = `
+    <svg viewBox="0 0 20 20" aria-hidden="true">
+      <line x1="10" y1="2"  x2="10" y2="7"  />
+      <line x1="10" y1="13" x2="10" y2="18" />
+      <line x1="2"  y1="10" x2="7"  y2="10" />
+      <line x1="13" y1="10" x2="18" y2="10" />
+    </svg>`;
+
   const ring = document.createElement('div');
   ring.id = 'cursor-ring';
-  document.body.append(dot, ring);
+  ring.innerHTML = `
+    <svg class="ring-svg" viewBox="0 0 60 60" aria-hidden="true">
+      <circle cx="30" cy="30" r="28" />
+    </svg>
+    <span class="bracket tl"></span>
+    <span class="bracket tr"></span>
+    <span class="bracket bl"></span>
+    <span class="bracket br"></span>`;
+
+  const label = document.createElement('div');
+  label.id = 'cursor-label';
+
+  const trail: HTMLDivElement[] = [];
+  const TRAIL_N = 6;
+  for (let i = 0; i < TRAIL_N; i++) {
+    const t = document.createElement('div');
+    t.className = 'cursor-trail-dot';
+    t.style.opacity = String((1 - i / TRAIL_N) * 0.5);
+    trail.push(t);
+  }
+
+  document.body.append(...trail, ring, dot, label);
 
   let dx = -100, dy = -100, rx = -100, ry = -100;
+  const trailPos = trail.map(() => ({ x: -100, y: -100 }));
   const ease = 0.18;
 
-  const onMove = (e: PointerEvent) => {
-    dx = e.clientX;
-    dy = e.clientY;
+  const onMove = (e: PointerEvent) => { dx = e.clientX; dy = e.clientY; };
+  const onLeave = () => {
+    dot.classList.add('hide'); ring.classList.add('hide');
+    label.classList.add('hide');
+    trail.forEach((t) => t.classList.add('hide'));
   };
-  const onLeave = () => { dot.classList.add('hide'); ring.classList.add('hide'); };
-  const onEnter = () => { dot.classList.remove('hide'); ring.classList.remove('hide'); };
+  const onEnter = () => {
+    dot.classList.remove('hide'); ring.classList.remove('hide');
+    trail.forEach((t) => t.classList.remove('hide'));
+  };
 
   window.addEventListener('pointermove', onMove, { passive: true });
   document.addEventListener('pointerleave', onLeave);
   document.addEventListener('pointerenter', onEnter);
 
+  const interactiveSel = 'a, button, [role="button"], input, textarea, select, label, .magnet, [data-cursor]';
+
   document.addEventListener('pointerover', (e) => {
-    const t = e.target as HTMLElement;
-    if (t.closest('a, button, [role="button"], input, textarea, select, label, .magnet')) {
-      ring.classList.add('grow');
-    }
+    const t = (e.target as HTMLElement).closest<HTMLElement>(interactiveSel);
+    if (!t) return;
+    ring.classList.add('grow');
+    dot.classList.add('grow');
+    const text = t.dataset.cursor
+      ?? (t.matches('input, textarea, select') ? 'type' : 'click');
+    label.textContent = text;
+    label.classList.add('show');
   });
   document.addEventListener('pointerout', (e) => {
-    const t = e.target as HTMLElement;
-    if (t.closest('a, button, [role="button"], input, textarea, select, label, .magnet')) {
-      ring.classList.remove('grow');
-    }
+    const t = (e.target as HTMLElement).closest<HTMLElement>(interactiveSel);
+    if (!t) return;
+    ring.classList.remove('grow');
+    dot.classList.remove('grow');
+    label.classList.remove('show');
+  });
+
+  document.addEventListener('pointerdown', () => {
+    ring.classList.add('press');
+    dot.classList.add('press');
+  });
+  document.addEventListener('pointerup', () => {
+    ring.classList.remove('press');
+    dot.classList.remove('press');
   });
 
   function tick() {
     rx += (dx - rx) * ease;
     ry += (dy - ry) * ease;
-    dot.style.transform = `translate3d(${dx - 3}px, ${dy - 3}px, 0)`;
-    ring.style.transform = `translate3d(${rx - 18}px, ${ry - 18}px, 0)`;
+    dot.style.transform = `translate3d(${dx - 10}px, ${dy - 10}px, 0)`;
+    ring.style.transform = `translate3d(${rx - 30}px, ${ry - 30}px, 0)`;
+    label.style.transform = `translate3d(${rx + 24}px, ${ry + 18}px, 0)`;
+
+    let px = dx, py = dy;
+    for (let i = 0; i < trail.length; i++) {
+      const p = trailPos[i];
+      p.x += (px - p.x) * (0.28 - i * 0.025);
+      p.y += (py - p.y) * (0.28 - i * 0.025);
+      trail[i].style.transform = `translate3d(${p.x - 3}px, ${p.y - 3}px, 0)`;
+      px = p.x; py = p.y;
+    }
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);

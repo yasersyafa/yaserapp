@@ -241,39 +241,109 @@
 }
 
 #cursor-dot,
-#cursor-ring {
+#cursor-ring,
+#cursor-label,
+.cursor-trail-dot {
   position: fixed;
   top: 0; left: 0;
   pointer-events: none;
   z-index: 9999;
-  border-radius: 9999px;
   mix-blend-mode: difference;
   transform: translate3d(-100px, -100px, 0);
+  will-change: transform, opacity;
 }
+
 #cursor-dot {
-  width: 6px; height: 6px;
-  background: #fff;
-  transition: transform 60ms linear, opacity 240ms ease, background 240ms ease;
+  width: 20px; height: 20px;
+  transition: opacity 240ms ease, filter 240ms ease;
 }
+#cursor-dot svg {
+  width: 100%; height: 100%;
+  overflow: visible;
+  transition: transform 320ms var(--ease-spring);
+}
+#cursor-dot svg line {
+  stroke: #fff;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  transition: stroke-width 240ms ease;
+}
+#cursor-dot.grow svg { transform: rotate(45deg) scale(0.85); }
+#cursor-dot.press svg { transform: scale(0.55); }
+
 #cursor-ring {
-  width: 36px; height: 36px;
-  border: 1px solid #fff;
-  transition:
-    transform 360ms var(--ease-out-quart),
-    width 280ms var(--ease-spring),
-    height 280ms var(--ease-spring),
-    background 240ms ease,
-    opacity 240ms ease;
-}
-#cursor-ring.grow {
   width: 60px; height: 60px;
-  background: rgba(255, 255, 255, 0.08);
+  transition: opacity 240ms ease;
 }
+#cursor-ring .ring-svg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  overflow: visible;
+  animation: cursor-spin 8s linear infinite;
+  transition: transform 320ms var(--ease-spring), opacity 240ms ease;
+}
+#cursor-ring .ring-svg circle {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1;
+  stroke-dasharray: 3 5;
+  opacity: 0.85;
+}
+@keyframes cursor-spin {
+  to { transform: rotate(360deg); }
+}
+
+#cursor-ring .bracket {
+  position: absolute;
+  width: 10px; height: 10px;
+  border: 1.5px solid #fff;
+  opacity: 0;
+  transition:
+    opacity 240ms ease,
+    transform 320ms var(--ease-spring);
+}
+#cursor-ring .bracket.tl { top: -2px;    left: -2px;    border-right: none; border-bottom: none; transform: translate(4px, 4px); }
+#cursor-ring .bracket.tr { top: -2px;    right: -2px;   border-left:  none; border-bottom: none; transform: translate(-4px, 4px); }
+#cursor-ring .bracket.bl { bottom: -2px; left: -2px;    border-right: none; border-top:    none; transform: translate(4px, -4px); }
+#cursor-ring .bracket.br { bottom: -2px; right: -2px;   border-left:  none; border-top:    none; transform: translate(-4px, -4px); }
+
+#cursor-ring.grow .ring-svg { transform: scale(1.2); opacity: 0.25; }
+#cursor-ring.grow .bracket { opacity: 1; transform: translate(0, 0); }
+#cursor-ring.press .ring-svg { transform: scale(0.85); }
+
+#cursor-label {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: color-mix(in oklab, var(--bg) 75%, transparent);
+  padding: 4px 8px;
+  border: 1px solid var(--accent);
+  border-radius: 9999px;
+  white-space: nowrap;
+  opacity: 0;
+  mix-blend-mode: normal;
+  transform-origin: 0 0;
+  transition: opacity 220ms ease;
+}
+#cursor-label.show { opacity: 1; }
+#cursor-label.hide { opacity: 0; }
+
+.cursor-trail-dot {
+  width: 6px; height: 6px;
+  border-radius: 9999px;
+  background: #fff;
+  transition: opacity 240ms ease;
+}
+
 #cursor-ring.hide,
-#cursor-dot.hide { opacity: 0; }
+#cursor-dot.hide,
+#cursor-label.hide,
+.cursor-trail-dot.hide { opacity: 0; }
 
 @media (hover: none), (pointer: coarse) {
-  #cursor-dot, #cursor-ring { display: none; }
+  #cursor-dot, #cursor-ring, #cursor-label, .cursor-trail-dot { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -283,7 +353,7 @@
     animation-iteration-count: 1 !important;
   }
   body { cursor: auto; }
-  #cursor-dot, #cursor-ring { display: none; }
+  #cursor-dot, #cursor-ring, #cursor-label, .cursor-trail-dot { display: none; }
   .reveal, .stagger > * { opacity: 1; transform: none; }
 }
 
