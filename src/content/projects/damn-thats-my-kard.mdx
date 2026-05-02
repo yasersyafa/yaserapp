@@ -1,0 +1,74 @@
+---
+title: "D*mn, That's My Kard"
+dek: A classic-style tactical card game where Blackjack rules decide the order of attack, not the size of the damage. Climb the tower, one hand at a time.
+type: game
+year: 2025
+role: Programmer
+engine: Unity
+languages: [C#]
+duration: 3 months
+hero: /sprites/placeholder-hero.svg
+heroAlt: D*mn Thats My Kard tabletop scene with cards arranged in front of an enemy
+tags: [unity, cards, splines, state-pattern]
+featured: true
+links:
+  source: https://github.com/F1kkk/DungeonJack
+  itch: https://faliharydhka.itch.io/dtmk
+star:
+  situation:
+    body: >-
+      D*mn, That's My Kard is a tactical card game with a Blackjack twist and
+      no gambling elements. The player takes the role of Jack, climbing a
+      mysterious tower through one-on-one card duels. The Blackjack number
+      system decides the order of attack rather than the damage, which puts
+      the focus on careful risk-taking instead of raw stats.
+    points:
+      - Blackjack mechanic adapted into combat
+      - Number total decides attack order, not damage
+      - Stylish presentation with quirky enemies and a comedic tone
+  task:
+    body: >-
+      My job was to implement the Blackjack gameplay system as the foundation
+      of the game, develop the 3D card movement, and integrate round results
+      into the player and enemy health systems so each round of cards felt like
+      a real combat outcome.
+    points:
+      - Full Blackjack flow as the combat core
+      - 3D card movement that reads as smooth and intentional
+      - Card outcomes wired into the health system
+  action:
+    body: >-
+      I designed the entire Blackjack system flow first, including the card
+      draw, hit or stand, total calculation, bust conditions, and round
+      winner. To improve the visual feel, I studied and implemented Unity
+      Splines so cards could move along a curve rather than a straight line.
+      I broke the codebase into a card system, combat system, animation
+      handler, and state pattern so the integration between card logic, 3D
+      animation, and turn synchronisation stayed structured.
+    points:
+      - Full Blackjack rules engine inside Unity
+      - First project to use Unity Splines for card motion
+      - System split into card, combat, animation, and state modules
+      - State pattern coordinates turns, attacks, and health changes
+  result:
+    body: >-
+      The final loop runs smoothly and stays consistent with the original
+      design. Blackjack is not just a card game inside the project; it
+      determines the flow of the entire battle. The card positions look better
+      thanks to Splines, and the integration between cards and combat makes
+      every player decision feel immediately impactful.
+    points:
+      - Combat flow synchronised with card outcomes
+      - First production usage of Unity Splines on the team
+      - State pattern made the debugging path clear
+    metrics:
+      - { label: 'Role', value: 'Programmer' }
+      - { label: 'Tech', value: 'Unity Splines · State Pattern' }
+      - { label: 'Engine', value: 'Unity' }
+---
+
+## Tech notes
+
+- Blackjack rules engine implemented from first principles in C#
+- Unity Splines control card trajectories for a tactile, hand-built feel
+- Code split into card, combat, animation handler, and state pattern modules

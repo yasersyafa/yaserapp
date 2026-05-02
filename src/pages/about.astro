@@ -14,84 +14,86 @@ const counts = {
 };
 
 const skills = [
-  { label: 'Gameplay programming', level: 5 },
-  { label: 'Tooling & pipelines', level: 5 },
-  { label: 'Shader / GLSL', level: 4 },
-  { label: 'Game design', level: 4 },
+  { label: 'Gameplay programming', level: 4 },
+  { label: 'Frontend', level: 5 },
+  { label: 'Backend', level: 5 },
+  { label: 'Tooling & pipelines', level: 4 },
+  { label: 'Game design', level: 3 },
   { label: 'Systems architecture', level: 4 },
-  { label: '3D / stylized rendering', level: 3 },
-  { label: 'Pixel & vector art', level: 3 },
-  { label: 'Audio / SFX', level: 2 },
 ];
 
 const stack = [
-  { label: 'Engines', items: ['Unity', 'Godot', 'custom (Rust + wgpu)'], accent: 'from-(--accent)/20 to-transparent' },
-  { label: 'Languages', items: ['C#', 'Rust', 'TypeScript', 'GLSL', 'Python'], accent: 'from-(--secondary)/20 to-transparent' },
-  { label: 'Art', items: ['Aseprite', 'Blender', 'Figma'], accent: 'from-(--accent)/15 to-transparent' },
-  { label: 'Audio', items: ['Reaper', 'Bitwig'], accent: 'from-(--secondary)/15 to-transparent' },
+  { label: '', items: ['Unity', 'Godot', 'Phaser', 'Astro', 'Next', 'Hono', 'C#', 'Lua', 'TypeScript', 'Java', 'React', 'Vue'], accent: 'from-(--accent)/20 to-transparent' },
 ];
 
 const dailyTools = [
-  { label: 'Editor', value: 'Neovim · Cursor' },
-  { label: 'Terminal', value: 'Ghostty + zsh' },
-  { label: 'OS', value: 'macOS · Arch (dual)' },
-  { label: 'Notes', value: 'Obsidian' },
+  { label: 'Editor', value: 'VS Code · Claude Code' },
+  { label: 'Terminal', value: 'zsh' },
+  { label: 'OS', value: 'macOS' },
+  { label: 'Notes', value: 'Notion · Google Docs' },
   { label: 'Design', value: 'Figma · Excalidraw' },
-  { label: 'Versioning', value: 'git · jujutsu' },
-  { label: 'Hardware', value: 'M2 Air · 27" 4K · ZSA Voyager' },
-  { label: 'Music', value: 'AirPods Pro · lo-fi loops' },
+  { label: 'Versioning', value: 'git' },
 ];
 
 const experience = [
   {
-    role: 'Indie game developer',
-    org: 'Self-employed',
+    role: 'Game porting programmer & Fullstack programmer',
+    org: 'HAGE Games',
     period: '2023 — now',
     bullets: [
-      'Solo-shipping small focused games on itch.io.',
-      'Built DevKit, a Rust asset hot-reload daemon used in two jams since.',
+      'Port mobile/desktop game to Web games',
+      'Built fullstack web https://hagegames.com and https://next-hagebook.vercel.app',
+      'Implement SDK for publishing to web game platforms.',
+      'Built custom WebGL Template, a custom loading screen for HAGE Games products.',
       'Writing the public devlog as a working notebook.',
     ],
   },
   {
-    role: 'Software engineer',
-    org: 'Freelance / contract',
-    period: '2022 — 2024',
+    role: 'Game programming intern',
+    org: 'Gamechanger Studio',
+    period: '2025 - 2026',
     bullets: [
-      'Built tooling and internal dashboards for two early-stage teams.',
-      'TypeScript + Rust + Postgres stack, end-to-end ownership.',
+      'Minigame scripting in Unity for a desktop game.',
+      'First experience in localizations and addressable library.',
     ],
   },
   {
-    role: 'Game programming intern',
-    org: 'Local studio',
-    period: '2021',
+    role: 'Webmaster',
+    org: 'EEPIS News and Network Team',
+    period: '2023 — 2024',
     bullets: [
-      'Gameplay scripting in Unity for a mobile prototype.',
-      'First exposure to ECS and shader pipelines.',
+      'Head of EEPIS News and Network Team: coordinate to all division in organizations',
+      'Built frontend https://ent.pens.ac.id using React Typescript.',
+      'Built frontend https://media.ent.pens.ac.id using Vue.js',
     ],
-  },
+  }
 ];
 
 const education = [
   {
-    school: 'Universitas — TBD',
-    program: 'B.Sc., Computer Science',
-    period: '2020 — 2024',
-    detail: 'Focus on graphics, systems, and HCI. Self-directed game dev throughout.',
+    school: 'Politeknik Elektronika Negeri Surabaya — SBY',
+    program: 'Game Technology',
+    period: '2023 — 2027',
+    detail: 'Focus on game development while joining to Webmaster team.',
+  },
+  {
+    school: 'SMK Negeri 1 Jakarta — JKT',
+    program: 'Software Engineering',
+    period: '2020 - 2023',
+    detail: 'Focus on web development, both in frontend and backend',
   },
 ];
 
 const currently = [
-  { label: 'Building', value: 'Neon Drift — track 5 of 7' },
-  { label: 'Reading', value: 'Game Programming Patterns' },
-  { label: 'Listening', value: 'lo-fi · synthwave' },
+  { label: 'Building', value: 'Bloom & Place' },
+  { label: 'Reading', value: 'Ego is The Enemy' },
+  { label: 'Listening', value: 'The Goo Goo Dolls · Black Balloons' },
 ];
 
 const principles = [
-  'Ship the smallest thing that proves the idea.',
-  'Tools earn their keep by removing the next pain.',
-  'The postmortem is the product.',
+  'Work',
+  'Life',
+  'Balance',
 ];
 ---
 
@@ -118,14 +120,20 @@ const principles = [
   <section class="max-w-5xl mx-auto px-5 sm:px-6 pb-16">
     <div class="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8 sm:gap-12 items-start">
       <div class="reveal">
-        <div class="aspect-square rounded-2xl border border-(--line) bg-linear-to-br from-(--accent)/15 to-(--secondary)/10 grid place-items-center mono text-xs text-(--muted)">
-          portrait
+        <div class="aspect-square rounded-2xl border border-(--line) overflow-hidden bg-linear-to-br from-(--accent)/15 to-(--secondary)/10">
+          <img
+            src="/sprites/profile.jpg"
+            alt={`Portrait of ${site.author.name}`}
+            class="w-full h-full object-cover"
+            width="600"
+            height="600"
+            loading="eager"
+          />
         </div>
         <p class="mono text-[10px] uppercase tracking-widest text-(--muted) mt-3">— {site.author.name}</p>
       </div>
-      <div class="prose-pixel max-w-2xl text-base sm:text-lg [&_p]:my-5 [&_a]:link [&_a]:text-(--fg) reveal">
-        <p>I build games and the tools that make building games faster. Most of my time goes to small focused projects — usually 2-to-6-month builds where I can be the whole team.</p>
-        <p>Lately I've been deep in <strong class="text-(--fg)">Rust</strong> on the tools side and <strong class="text-(--fg)">stylized 3D</strong> on the game side. The mix isn't accidental: every game I ship teaches me what's painful, and every tool I write removes one of those pains for the next project.</p>
+      <div class="prose-pixel text-justify text-pretty max-w-2xl text-base sm:text-lg [&_p]:my-5 [&_a]:link [&_a]:text-(--fg) reveal">
+        <p>I am Muhammad Yaser Syafa Al-Machdi, a <strong class="text-(--fg)">final year Game Technology student</strong> passionate about creating games and web applications. I have joined various competitions, including game development contests, campus website competitions, and game jams, where I sharpened my skills in teamwork, problem-solving, and rapid prototyping.</p>
         <p>I write the <a href="/blog/">devlog</a> as a working notebook. If something here is useful to you, <a href="/contact/">send me a note</a>.</p>
       </div>
     </div>
@@ -176,11 +184,11 @@ const principles = [
       <h2 class="display text-3xl sm:text-5xl">Stack</h2>
       <p class="mono text-xs text-(--muted) hidden sm:block">tools I reach for</p>
     </header>
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 stagger">
+    <div class="grid grid-cols-1 gap-4 sm:gap-6 stagger">
       {stack.map((s) => (
         <div class={`tilt rounded-2xl border border-(--line) p-5 sm:p-6 bg-linear-to-br ${s.accent} group transition-colors hover:border-(--fg)`} data-tilt="4">
           <p class="mono text-[10px] uppercase tracking-widest text-(--muted) mb-3">{s.label}</p>
-          <ul class="flex flex-wrap gap-2">
+          <ul class="flex justify-center flex-wrap gap-2">
             {s.items.map((it) => (
               <li class="chip group-hover:border-(--fg) group-hover:text-(--fg) transition-colors">{it}</li>
             ))}
@@ -195,7 +203,7 @@ const principles = [
       <h2 class="display text-3xl sm:text-5xl">Daily tools</h2>
       <p class="mono text-xs text-(--muted) hidden sm:block">what's open right now</p>
     </header>
-    <dl class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 stagger">
+    <dl class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 stagger">
       {dailyTools.map((t) => (
         <div class="rounded-xl border border-(--line) p-4 sm:p-5 hover:border-(--fg) transition-colors">
           <dt class="mono text-[10px] uppercase tracking-widest text-(--muted)">{t.label}</dt>

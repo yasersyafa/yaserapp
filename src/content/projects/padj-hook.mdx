@@ -1,0 +1,67 @@
+---
+title: PadjHuk
+dek: A WebGL game with a real online leaderboard. Built the RESTful backend and wired it into Unity, the long way.
+type: game
+year: 2025
+role: Game Backend Programmer
+engine: Unity
+languages: [C#]
+duration: 1 month
+hero: /sprites/placeholder-hero.svg
+heroAlt: PadjHuk title screen with a horned monster and lightning above the menu
+tags: [unity, webgl, backend, rest-api]
+links:
+  source: https://github.com/dhityawe/padj-hook
+  itch: https://yasersyafaa.itch.io
+star:
+  situation:
+    body: >-
+      PadjHuk is a WebGL game with an online leaderboard. The team needed a
+      real backend, not a fake local one, so scores would persist across
+      sessions and sync across players. None of us had wired a custom REST API
+      into Unity before.
+    points:
+      - WebGL game with persistent leaderboard
+      - No prior team experience integrating REST into Unity
+      - First time building both the API and the consumer side
+  task:
+    body: >-
+      As Game Backend Programmer, I built a RESTful API for the leaderboard
+      and integrated it with the in-game UI so submissions and reads stayed in
+      sync with the live data.
+    points:
+      - Design and ship a RESTful leaderboard API
+      - Integrate with Unity's WebGL build
+      - Keep latency low enough that the menu does not stall
+  action:
+    body: >-
+      I built the backend as a small RESTful service, then wrote the Unity
+      side that consumes it. API consumption inside Unity needs more low-level
+      work than something like Axios on the web. I leaned into UnityWebRequest
+      and structured the wiring so the leaderboard UI stays responsive when
+      the network is slow. This was my first time connecting a Unity client
+      to a custom REST API.
+    points:
+      - Custom REST API for leaderboard reads and writes
+      - Unity client built on UnityWebRequest, not a third-party SDK
+      - UI handlers wired to keep the menu responsive on slow networks
+  result:
+    body: >-
+      The leaderboard works end-to-end in the WebGL build. More importantly,
+      it gave me a real point of comparison between Unity's HTTP layer and the
+      web tooling I already knew. After this, integrating external services
+      into Unity stopped feeling intimidating.
+    points:
+      - End-to-end leaderboard working in the live WebGL build
+      - Reusable Unity HTTP wrapper for future projects
+      - First completed Unity to REST integration on the team
+    metrics:
+      - { label: 'Role', value: 'Backend Programmer' }
+      - { label: 'Stack', value: 'Unity · .NET · C#' }
+      - { label: 'Build target', value: 'WebGL' }
+---
+
+## Tech notes
+
+- RESTful leaderboard API consumed via UnityWebRequest in WebGL builds
+- Repo: client at github.com/dhityawe/padj-hook, API at github.com/yasersyafa/padj-hook-api

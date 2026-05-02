@@ -1,0 +1,77 @@
+---
+title: Crimson Sanctum
+dek: A 2D arcade-style endless-tower platformer with an auto-moving character. Time your dashes, line up your climbs, and see how far you can ascend.
+type: game
+year: 2025
+role: Gameplay Programmer
+engine: Unity
+languages: [C#]
+duration: 2 months
+hero: /sprites/placeholder-hero.svg
+heroAlt: Crimson Sanctum gothic interior scene with stained-glass windows in deep red
+tags: [unity, platformer, object-pooling, shaders]
+featured: true
+links:
+  source: https://github.com/dhityawe/Crimson-Sanctum
+  itch: https://yasersyafaa.itch.io/crimson-sanctum
+star:
+  situation:
+    body: >-
+      Crimson Sanctum is a 2D arcade-style platformer with an endless tower
+      concept. The character moves automatically, so the player focuses on
+      precise timing, positioning, and dash usage. The design challenge was
+      that auto-movement removes a lot of player agency, and the controls had
+      to feel responsive and fair without giving full directional control.
+    points:
+      - Endless-tower platformer, auto-moving character
+      - Player agency limited to timing, dashes, and positioning
+      - Performance had to stay stable across long runs
+  task:
+    body: >-
+      As Gameplay Programmer, I owned the player controller, the auto-movement
+      direction logic, climbing transitions, dash and jump mechanics, and the
+      floor spawn system that supports the endless tower without leaking
+      memory.
+    points:
+      - Player controller and movement state machine
+      - Direction handling when transitioning to climbing
+      - Dash, jump, and climb mechanics
+      - Endless floor spawn with object pooling
+  action:
+    body: >-
+      I built the player controller around a state machine so walking,
+      dashing, jumping, and climbing could be integrated without state
+      conflicts. The trickiest part was making horizontal-to-vertical
+      transitions feel natural, which I solved by separating movement logic by
+      surface context and tuning state priorities. For the tower, I used
+      Unity's object pooling so floors could be spawned and recycled
+      dynamically as the player ascended, avoiding the cost of repeated
+      instantiation. I also set up the post-processing stack and wrote an
+      outline effect using Shader Graph for the game's atmosphere.
+    points:
+      - State-based player controller covering walk, dash, jump, and climb
+      - Movement logic separated by surface context for natural transitions
+      - Object pooling on floors to keep performance stable on long runs
+      - Post-processing stack and Shader Graph outline effect
+  result:
+    body: >-
+      The gameplay system runs smoothly and stays in line with the design
+      intent. The player controller feels responsive even though it is
+      auto-movement based. Dash and climb add mechanical depth without
+      breaking the rhythm. The pooled floor spawn system holds performance
+      across extended sessions.
+    points:
+      - Stable performance during long endless-tower runs
+      - Controller feels responsive in spite of auto-movement
+      - Dash and climb provide the difficulty curve the design wanted
+    metrics:
+      - { label: 'Role', value: 'Gameplay Programmer' }
+      - { label: 'Patterns', value: 'State Machine · Object Pooling' }
+      - { label: 'Polish', value: 'Post-process · Shader Graph' }
+---
+
+## Tech notes
+
+- Player controller built on a state machine to prevent conflicting transitions
+- Object pooling drives the endless floor spawn without GC pressure
+- Outline effect written in Shader Graph, paired with the post-processing stack

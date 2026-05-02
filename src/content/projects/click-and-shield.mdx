@@ -1,0 +1,76 @@
+---
+title: Click And Shield
+dek: A mini-game compilation about cybersecurity, built in two weeks for a national competition. Took 1st place at Universitas Brawijaya.
+type: game
+year: 2024
+role: Team Lead & Lead Programmer
+engine: Unity
+languages: [C#]
+duration: 2 weeks
+hero: /sprites/placeholder-hero.svg
+heroAlt: Click And Shield title screen with the welcome scene introducing the cybersecurity theme
+tags: [unity, state-pattern, mini-games, competition]
+featured: true
+links:
+  source: https://github.com/yasersyafa/Click-And-Shield
+  itch: https://yasersyafaa.itch.io/click-and-shield
+press:
+  - { label: '1st Place — 4C National Competition 2024 (Brawijaya)', url: 'https://github.com/yasersyafa/Click-And-Shield' }
+star:
+  situation:
+    body: >-
+      Click And Shield was built for the 4C National Competition at
+      Universitas Brawijaya. The team had two weeks to ship an engaging game
+      on a topic that mattered. We picked cybersecurity, inspired by the pace
+      of Dumb Ways to Die, and committed to a mini-game compilation with
+      cutscenes between rounds. The core risk was managing many different
+      mini-game logics inside one main system without crashes or messy code.
+    points:
+      - National competition with a hard 14-day deadline
+      - Cybersecurity-themed mini-game compilation
+      - Multiple mini-game logics had to coexist cleanly in one runtime
+  task:
+    body: >-
+      I held two roles, Team Lead and Lead Programmer. The technical
+      responsibility was to design the architectural foundation that allowed
+      mini-games to integrate quickly, ensure smooth transitions between
+      levels and cutscenes, and coordinate the engineering tasks across the
+      team so a 14-day target was actually reachable.
+    points:
+      - Architectural foundation for fast mini-game integration
+      - Smooth transitions between mini-games and cutscenes
+      - Team coordination across the two-week deadline
+  action:
+    body: >-
+      I designed the game architecture around the State Pattern, which let
+      each mini-game and cutscene live as an independent module and minimised
+      cross-bug risk. I built an automatic transition system that handled
+      asset loading and game-state setup, so transitions only happened after
+      the previous state had been validated. The Finite State Machine
+      approach also gave each mini-game a clear contract to plug into.
+    points:
+      - State Pattern as the backbone for every mini-game and cutscene
+      - Automatic transition system with validated state hand-off
+      - FSM contract per mini-game so the team could parallelise
+      - Daily coordination kept the 2-week schedule realistic
+  result:
+    body: >-
+      We took first place in the Game Development category at the 4C National
+      Competition 2024. The team delivered a stable game with strong
+      technical performance under an extremely tight schedule. The judges'
+      feedback specifically called out the educational quality and fun factor.
+    points:
+      - 1st place, 4C National Competition 2024 (Game Development)
+      - Stable build despite the 14-day window
+      - State-pattern architecture became my reference for future jams
+    metrics:
+      - { label: 'Award', value: '1st Place' }
+      - { label: 'Event', value: '4C National 2024' }
+      - { label: 'Duration', value: '2 weeks' }
+---
+
+## Tech notes
+
+- State Pattern as the architectural backbone, one state per mini-game and per cutscene
+- Automatic transition system validates previous state before advancing
+- Finite State Machine contracts gave each mini-game a clean integration point

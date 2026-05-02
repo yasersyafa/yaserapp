@@ -1,0 +1,76 @@
+---
+title: Samsul Recycle
+dek: A 48-hour game jam project about an intern collecting and recycling waste. The first jam I ever placed in, and the one that made me serious about gamedev.
+type: jam
+year: 2024
+role: Programmer
+engine: Unity
+languages: [C#]
+duration: 48 hours
+hero: /sprites/placeholder-hero.svg
+heroAlt: Samsul Recycle gameplay showing the recycling minigame with item slots and a timer
+tags: [unity, jam, scriptable-objects, scene-management]
+featured: true
+links:
+  source: https://github.com/yasersyafa/Samsul-Recycle
+  itch: https://yasersyafaa.itch.io/samsul-recycle
+press:
+  - { label: '2nd Runner-Up — COMPFEST 16 IGI Game Jam', url: 'https://yasersyafaa.itch.io/samsul-recycle' }
+star:
+  situation:
+    body: >-
+      Samsul Recycle is a game about Samsul, an intern at Bang Udin's
+      Laboratory, the Recycling and Real Innovation Unit. He has to collect
+      waste and turn it into innovative products. It was developed during the
+      COMPFEST 16 IGI Game Jam at Universitas Indonesia. The team was two
+      people and the deadline was 48 hours. It was my first time competing
+      seriously at a jam, so the pressure to ship something stable and
+      interesting was real.
+    points:
+      - 48-hour deadline at COMPFEST 16 IGI Game Jam
+      - 2-person team, full-stack of game work each
+      - First serious jam for me personally
+  task:
+    body: >-
+      As programmer on a two-person team, I owned the main game logic. The
+      specific responsibilities were managing the flow between levels and
+      building the simple crafting system that drove the recycling theme.
+    points:
+      - Game-flow and scene management
+      - Crafting system as the central mechanic
+      - Modular data so we could add items without rewriting code
+  action:
+    body: >-
+      To meet the deadline I focused on development efficiency. The crafting
+      system was built on top of ScriptableObjects so item data and recycling
+      recipes lived as data assets rather than hard-coded values. That meant
+      adding a new item or recipe was an editor task, not a code task. The
+      scene management glued the levels and the crafting flow together
+      without any of the systems holding direct references to each other.
+    points:
+      - ScriptableObjects for item data and recycling recipes
+      - Adding new content stayed an editor task, not a code change
+      - Scene-management layer kept levels and crafting decoupled
+      - Time-boxed scope decisions every few hours of the jam
+  result:
+    body: >-
+      The team took 2nd Runner-Up at COMPFEST 16 IGI Game Jam. It was the
+      first award I received in game development, and it became the milestone
+      that turned hobby curiosity into a serious career direction. The
+      project also taught me the value of data-driven content pipelines under
+      extreme time pressure.
+    points:
+      - 2nd Runner-Up at COMPFEST 16 IGI Game Jam
+      - First competitive award in gamedev
+      - Sparked the decision to pursue game development seriously
+    metrics:
+      - { label: 'Award', value: '2nd Runner-Up' }
+      - { label: 'Event', value: 'COMPFEST 16 IGI Jam' }
+      - { label: 'Duration', value: '48 hours' }
+---
+
+## Tech notes
+
+- ScriptableObjects as the storage layer for items and recycling recipes
+- Scene-management layer keeps level flow and crafting decoupled
+- Built by a 2-person team inside a 48-hour window
