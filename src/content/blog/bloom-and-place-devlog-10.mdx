@@ -82,14 +82,47 @@ Prototype as it stands today. Every line below is a concrete dependency one clas
 
 <div class="not-prose my-8 font-mono text-sm">
   <div class="brut overflow-hidden">
-    <div class="px-5 py-3 border-b-2 border-(--fg) text-[10px] uppercase tracking-[0.2em] text-(--muted)">Before · 9 outgoing dependencies, 1 cycle, 1 SDP violation</div>
+    <div class="display uppercase tracking-[0.05em] text-[0.85rem] px-5 py-3 border-b-2 border-(--fg)" style="background:#d04646;color:#fff">Before · 9 outgoing · 1 cycle · 1 SDP violation</div>
     <ul class="divide-y-2 divide-(--fg)">
-      <li class="px-5 py-3 flex flex-wrap items-baseline gap-x-3"><span class="text-(--fg) min-w-[10rem]">Plant</span><span class="text-(--muted)">depends on</span><span class="text-(--fg)">Seat · PlantPreference · PlantOutlineHover</span></li>
-      <li class="px-5 py-3 flex flex-wrap items-baseline gap-x-3"><span class="text-(--fg) min-w-[10rem]">Plant</span><span class="text-(--muted)">depends on</span><span style="color:#d04646">PlantSelectionManager · CustomCursorManager</span><span class="ml-auto text-[10px] uppercase tracking-[0.2em]" style="color:#d04646">↑ wrong direction</span></li>
-      <li class="px-5 py-3 flex flex-wrap items-baseline gap-x-3"><span class="text-(--fg) min-w-[10rem]">PlantSelectionManager</span><span class="text-(--muted)">depends on</span><span style="color:#d04646">Plant</span><span class="ml-auto text-[10px] uppercase tracking-[0.2em]" style="color:#d04646">↻ cycle with Plant</span></li>
-      <li class="px-5 py-3 flex flex-wrap items-baseline gap-x-3"><span class="text-(--fg) min-w-[10rem]">PlantSelectionManager</span><span class="text-(--muted)">depends on</span><span class="text-(--fg)">Seat · ScoreManager</span></li>
-      <li class="px-5 py-3 flex flex-wrap items-baseline gap-x-3"><span class="text-(--fg) min-w-[10rem]">Seat</span><span class="text-(--muted)">depends on</span><span style="color:#d04646">PlantSelectionManager</span><span class="ml-auto text-[10px] uppercase tracking-[0.2em]" style="color:#d04646">↑ SDP violation</span></li>
-      <li class="px-5 py-3 flex flex-wrap items-baseline gap-x-3"><span class="text-(--fg) min-w-[10rem]">ScoreManager</span><span class="text-(--muted)">depends on</span><span class="text-(--fg)">Plant · Seat · PreferenceChecker</span></li>
+      <li class="grid grid-cols-1 sm:grid-cols-[12rem_6rem_1fr] gap-y-1 sm:gap-x-4 px-5 py-4 items-baseline">
+        <span class="display uppercase tracking-[0.04em] text-[0.82rem] text-(--fg)">Plant</span>
+        <span class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">depends on</span>
+        <span class="text-(--fg)">Seat · PlantPreference · PlantOutlineHover</span>
+      </li>
+      <li class="grid grid-cols-1 sm:grid-cols-[12rem_6rem_1fr] gap-y-1 sm:gap-x-4 px-5 py-4 items-baseline">
+        <span class="display uppercase tracking-[0.04em] text-[0.82rem] text-(--fg)">Plant</span>
+        <span class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">depends on</span>
+        <span class="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <span style="color:#d04646">PlantSelectionManager · CustomCursorManager</span>
+          <span class="text-[10px] uppercase tracking-[0.15em] border-2 px-2 py-0.5" style="color:#d04646;border-color:#d04646">↑ wrong direction</span>
+        </span>
+      </li>
+      <li class="grid grid-cols-1 sm:grid-cols-[12rem_6rem_1fr] gap-y-1 sm:gap-x-4 px-5 py-4 items-baseline">
+        <span class="display uppercase tracking-[0.04em] text-[0.82rem] text-(--fg)">PlantSelectionManager</span>
+        <span class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">depends on</span>
+        <span class="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <span style="color:#d04646">Plant</span>
+          <span class="text-[10px] uppercase tracking-[0.15em] border-2 px-2 py-0.5" style="color:#d04646;border-color:#d04646">↻ cycle with Plant</span>
+        </span>
+      </li>
+      <li class="grid grid-cols-1 sm:grid-cols-[12rem_6rem_1fr] gap-y-1 sm:gap-x-4 px-5 py-4 items-baseline">
+        <span class="display uppercase tracking-[0.04em] text-[0.82rem] text-(--fg)">PlantSelectionManager</span>
+        <span class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">depends on</span>
+        <span class="text-(--fg)">Seat · ScoreManager</span>
+      </li>
+      <li class="grid grid-cols-1 sm:grid-cols-[12rem_6rem_1fr] gap-y-1 sm:gap-x-4 px-5 py-4 items-baseline">
+        <span class="display uppercase tracking-[0.04em] text-[0.82rem] text-(--fg)">Seat</span>
+        <span class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">depends on</span>
+        <span class="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <span style="color:#d04646">PlantSelectionManager</span>
+          <span class="text-[10px] uppercase tracking-[0.15em] border-2 px-2 py-0.5" style="color:#d04646;border-color:#d04646">↑ SDP violation</span>
+        </span>
+      </li>
+      <li class="grid grid-cols-1 sm:grid-cols-[12rem_6rem_1fr] gap-y-1 sm:gap-x-4 px-5 py-4 items-baseline">
+        <span class="display uppercase tracking-[0.04em] text-[0.82rem] text-(--fg)">ScoreManager</span>
+        <span class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">depends on</span>
+        <span class="text-(--fg)">Plant · Seat · PreferenceChecker</span>
+      </li>
     </ul>
   </div>
 </div>
@@ -100,17 +133,50 @@ Prototype as it stands today. Every line below is a concrete dependency one clas
 
 <div class="not-prose my-8 font-mono text-sm">
   <div class="brut overflow-hidden">
-    <div class="px-5 py-3 border-b-2 border-(--fg) text-[10px] uppercase tracking-[0.2em] text-(--accent)">After · all arrows downward, no cycles</div>
+    <div class="display uppercase tracking-[0.05em] text-[0.85rem] px-5 py-3 border-b-2 border-(--fg) bg-(--accent) text-(--color-fg)">After · all arrows downward · no cycles</div>
     <ul class="divide-y-2 divide-(--fg)">
-      <li class="px-5 py-3 flex flex-wrap items-baseline gap-x-3"><span class="text-(--fg) min-w-[10rem]">Plant</span><span class="text-(--muted)">depends on</span><span class="text-(--fg)">Seat · PlantPreference · PlantOutlineHover</span><span class="ml-auto text-[10px] uppercase tracking-[0.2em] text-(--muted)">data + core only</span></li>
-      <li class="px-5 py-3 flex flex-wrap items-baseline gap-x-3"><span class="text-(--fg) min-w-[10rem]">Plant</span><span class="text-(--muted)">publishes</span><span style="color:var(--accent)">OnPlantClicked · OnPlantSelected</span><span class="ml-auto text-[10px] uppercase tracking-[0.2em] text-(--muted)">no compile-time link</span></li>
-      <li class="px-5 py-3 flex flex-wrap items-baseline gap-x-3"><span class="text-(--fg) min-w-[10rem]">PlantSelectionManager</span><span class="text-(--muted)">DI</span><span style="color:var(--secondary)">IPlantSelectable · ISeat · ISatisfactionSystem</span></li>
-      <li class="px-5 py-3 flex flex-wrap items-baseline gap-x-3"><span class="text-(--fg) min-w-[10rem]">SatisfactionSystem</span><span class="text-(--muted)">DI</span><span style="color:var(--secondary)">IPlacementSystem · ICharacterSystem</span></li>
-      <li class="px-5 py-3 flex flex-wrap items-baseline gap-x-3"><span class="text-(--fg) min-w-[10rem]">CustomCursorManager</span><span class="text-(--muted)">subscribes to</span><span style="color:var(--accent)">OnPlantSelected</span></li>
-      <li class="px-5 py-3 flex flex-wrap items-baseline gap-x-3"><span class="text-(--fg) min-w-[10rem]">Seat</span><span class="text-(--muted)">depends on</span><span class="text-(--fg)">Plant <span class="text-(--muted)">(data only)</span></span></li>
+      <li class="grid grid-cols-1 sm:grid-cols-[12rem_6rem_1fr] gap-y-1 sm:gap-x-4 px-5 py-4 items-baseline">
+        <span class="display uppercase tracking-[0.04em] text-[0.82rem] text-(--fg)">Plant</span>
+        <span class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">depends on</span>
+        <span class="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <span class="text-(--fg)">Seat · PlantPreference · PlantOutlineHover</span>
+          <span class="text-[10px] uppercase tracking-[0.15em] border-2 border-(--fg) px-2 py-0.5 text-(--muted)">data + core only</span>
+        </span>
+      </li>
+      <li class="grid grid-cols-1 sm:grid-cols-[12rem_6rem_1fr] gap-y-1 sm:gap-x-4 px-5 py-4 items-baseline">
+        <span class="display uppercase tracking-[0.04em] text-[0.82rem] text-(--fg)">Plant</span>
+        <span class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">publishes</span>
+        <span class="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <span style="color:var(--accent)">OnPlantClicked · OnPlantSelected</span>
+          <span class="text-[10px] uppercase tracking-[0.15em] border-2 border-(--fg) px-2 py-0.5 text-(--muted)">no compile-time link</span>
+        </span>
+      </li>
+      <li class="grid grid-cols-1 sm:grid-cols-[12rem_6rem_1fr] gap-y-1 sm:gap-x-4 px-5 py-4 items-baseline">
+        <span class="display uppercase tracking-[0.04em] text-[0.82rem] text-(--fg)">PlantSelectionManager</span>
+        <span class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">DI</span>
+        <span style="color:var(--secondary)">IPlantSelectable · ISeat · ISatisfactionSystem</span>
+      </li>
+      <li class="grid grid-cols-1 sm:grid-cols-[12rem_6rem_1fr] gap-y-1 sm:gap-x-4 px-5 py-4 items-baseline">
+        <span class="display uppercase tracking-[0.04em] text-[0.82rem] text-(--fg)">SatisfactionSystem</span>
+        <span class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">DI</span>
+        <span style="color:var(--secondary)">IPlacementSystem · ICharacterSystem</span>
+      </li>
+      <li class="grid grid-cols-1 sm:grid-cols-[12rem_6rem_1fr] gap-y-1 sm:gap-x-4 px-5 py-4 items-baseline">
+        <span class="display uppercase tracking-[0.04em] text-[0.82rem] text-(--fg)">CustomCursorManager</span>
+        <span class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">subscribes</span>
+        <span style="color:var(--accent)">OnPlantSelected</span>
+      </li>
+      <li class="grid grid-cols-1 sm:grid-cols-[12rem_6rem_1fr] gap-y-1 sm:gap-x-4 px-5 py-4 items-baseline">
+        <span class="display uppercase tracking-[0.04em] text-[0.82rem] text-(--fg)">Seat</span>
+        <span class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">depends on</span>
+        <span class="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <span class="text-(--fg)">Plant</span>
+          <span class="text-[10px] uppercase tracking-[0.15em] border-2 border-(--fg) px-2 py-0.5 text-(--muted)">data only</span>
+        </span>
+      </li>
     </ul>
   </div>
-  <div class="grid grid-cols-3 gap-3 mt-4 text-[11px]">
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 text-[11px]">
     <div class="px-3 py-2 border-2 border-(--fg) bg-(--bg) shadow-[2px_2px_0_0_var(--fg)]"><span class="text-(--fg)">solid</span> <span class="text-(--muted)">typed dep</span></div>
     <div class="px-3 py-2 border-2 border-(--fg) bg-(--bg) shadow-[2px_2px_0_0_var(--fg)]"><span style="color:var(--secondary)">teal</span> <span class="text-(--muted)">DI via interface</span></div>
     <div class="px-3 py-2 border-2 border-(--fg) bg-(--bg) shadow-[2px_2px_0_0_var(--fg)]"><span style="color:var(--accent)">amber</span> <span class="text-(--muted)">event (anonymous)</span></div>
