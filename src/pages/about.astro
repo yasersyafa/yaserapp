@@ -171,7 +171,7 @@ const principles = [
           <span class="text-base sm:text-lg">{s.label}</span>
           <span class="flex gap-1.5 shrink-0" aria-label={`${s.level} of 5`}>
             {Array.from({ length: 5 }).map((_, i) => (
-              <span class={`w-2 h-2 rounded-full ${i < s.level ? 'bg-(--fg)' : 'bg-(--line)'}`}></span>
+              <span class={`w-3 h-3 border-2 border-(--fg) ${i < s.level ? 'bg-(--fg)' : 'bg-(--bg)'}`}></span>
             ))}
           </span>
         </li>

@@ -26,7 +26,7 @@ const tags = Array.from(new Set(posts.flatMap((p) => p.data.tags))).sort();
       </div>
     )}
 
-    <ul class="divide-y divide-(--line) stagger">
+    <ul class="divide-y-2 divide-(--fg) stagger">
       {posts.map((post) => (
         <li>
           <a href={`/blog/${post.id}/`} class="block py-6 sm:py-8 group">

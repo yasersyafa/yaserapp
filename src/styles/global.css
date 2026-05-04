@@ -429,16 +429,60 @@ body {
   max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  margin: 1.5rem 0;
+  margin: 1.75rem 0;
   border: 2px solid var(--fg);
+  box-shadow: 4px 4px 0 0 var(--fg);
+  background: var(--bg);
   -webkit-overflow-scrolling: touch;
 }
 .table-wrap > table {
   margin: 0 !important;
   width: max-content;
   min-width: 100%;
+  border-collapse: collapse;
 }
-.table-wrap > table th,
-.table-wrap > table td {
+.table-wrap > table thead {
+  background: var(--fg);
+  color: var(--bg);
+}
+.table-wrap > table thead th {
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.78rem;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid var(--fg);
   white-space: nowrap;
+}
+.table-wrap > table tbody td {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 2px solid var(--fg);
+  vertical-align: top;
+  white-space: nowrap;
+}
+.table-wrap > table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.table-wrap > table tbody tr:nth-child(even) td {
+  background: color-mix(in oklab, var(--accent) 8%, transparent);
+}
+.table-wrap > table tbody tr:hover td {
+  background: color-mix(in oklab, var(--accent) 18%, transparent);
+}
+.table-wrap > table code {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--color-fg);
+  border: 2px solid var(--fg);
+  padding: 0.05rem 0.35rem;
+  font-size: 0.78rem;
+  border-radius: 0;
+}
+.table-wrap > table thead th code {
+  background: var(--bg);
+  color: var(--fg);
 }

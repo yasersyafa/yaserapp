@@ -12,7 +12,7 @@ The architecture has five layers. Each layer has an expected Instability range. 
 
 <div class="not-prose my-10 font-mono">
   <div class="space-y-0">
-    <div class="grid grid-cols-[10rem_1fr] gap-6 items-baseline py-5 border-b border-(--line)">
+    <div class="grid grid-cols-[10rem_1fr] gap-6 items-baseline py-5 border-b-2 border-(--fg)">
       <div>
         <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Layer 5 · top</div>
         <div class="text-base text-(--fg) mt-1">View / Leaf</div>
@@ -23,7 +23,7 @@ The architecture has five layers. Each layer has an expected Instability range. 
         <div class="text-xs text-(--muted) mt-1.5 leading-relaxed">Reacts to events from Manager Layer. Nothing depends on it.</div>
       </div>
     </div>
-    <div class="grid grid-cols-[10rem_1fr] gap-6 items-baseline py-5 border-b border-(--line)">
+    <div class="grid grid-cols-[10rem_1fr] gap-6 items-baseline py-5 border-b-2 border-(--fg)">
       <div>
         <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Layer 4</div>
         <div class="text-base text-(--fg) mt-1">Manager</div>
@@ -34,7 +34,7 @@ The architecture has five layers. Each layer has an expected Instability range. 
         <div class="text-xs text-(--muted) mt-1.5 leading-relaxed">Coordinates gameplay flow. Reaches Core via DI; talks across via events.</div>
       </div>
     </div>
-    <div class="grid grid-cols-[10rem_1fr] gap-6 items-baseline py-5 border-b border-(--line)">
+    <div class="grid grid-cols-[10rem_1fr] gap-6 items-baseline py-5 border-b-2 border-(--fg)">
       <div>
         <div class="text-[10px] uppercase tracking-[0.2em] text-(--accent)">Layer 3 · core</div>
         <div class="text-base text-(--fg) mt-1">Core System</div>
@@ -45,7 +45,7 @@ The architecture has five layers. Each layer has an expected Instability range. 
         <div class="text-xs text-(--muted) mt-1.5 leading-relaxed">Game logic core. Depends on Data Layer only, never on Manager.</div>
       </div>
     </div>
-    <div class="grid grid-cols-[10rem_1fr] gap-6 items-baseline py-5 border-b border-(--line)">
+    <div class="grid grid-cols-[10rem_1fr] gap-6 items-baseline py-5 border-b-2 border-(--fg)">
       <div>
         <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Layer 2</div>
         <div class="text-base text-(--fg) mt-1">Foundation</div>
@@ -81,9 +81,9 @@ Two notes on reading this:
 Prototype as it stands today. Every line below is a concrete dependency one class has on another by name.
 
 <div class="not-prose my-8 font-mono text-sm">
-  <div class="rounded-2xl border border-(--line) overflow-hidden">
-    <div class="px-5 py-3 border-b border-(--line) text-[10px] uppercase tracking-[0.2em] text-(--muted)">Before · 9 outgoing dependencies, 1 cycle, 1 SDP violation</div>
-    <ul class="divide-y divide-(--line)">
+  <div class="brut overflow-hidden">
+    <div class="px-5 py-3 border-b-2 border-(--fg) text-[10px] uppercase tracking-[0.2em] text-(--muted)">Before · 9 outgoing dependencies, 1 cycle, 1 SDP violation</div>
+    <ul class="divide-y-2 divide-(--fg)">
       <li class="px-5 py-3 flex flex-wrap items-baseline gap-x-3"><span class="text-(--fg) min-w-[10rem]">Plant</span><span class="text-(--muted)">depends on</span><span class="text-(--fg)">Seat · PlantPreference · PlantOutlineHover</span></li>
       <li class="px-5 py-3 flex flex-wrap items-baseline gap-x-3"><span class="text-(--fg) min-w-[10rem]">Plant</span><span class="text-(--muted)">depends on</span><span style="color:#d04646">PlantSelectionManager · CustomCursorManager</span><span class="ml-auto text-[10px] uppercase tracking-[0.2em]" style="color:#d04646">↑ wrong direction</span></li>
       <li class="px-5 py-3 flex flex-wrap items-baseline gap-x-3"><span class="text-(--fg) min-w-[10rem]">PlantSelectionManager</span><span class="text-(--muted)">depends on</span><span style="color:#d04646">Plant</span><span class="ml-auto text-[10px] uppercase tracking-[0.2em]" style="color:#d04646">↻ cycle with Plant</span></li>
@@ -99,9 +99,9 @@ Prototype as it stands today. Every line below is a concrete dependency one clas
 `Plant` no longer references manager classes by name. It exposes the `IPlantSelectable` interface, publishes events, and the managers subscribe. The cycle is gone. `Seat` no longer reaches up.
 
 <div class="not-prose my-8 font-mono text-sm">
-  <div class="rounded-2xl border border-(--line) overflow-hidden">
-    <div class="px-5 py-3 border-b border-(--line) text-[10px] uppercase tracking-[0.2em] text-(--accent)">After · all arrows downward, no cycles</div>
-    <ul class="divide-y divide-(--line)">
+  <div class="brut overflow-hidden">
+    <div class="px-5 py-3 border-b-2 border-(--fg) text-[10px] uppercase tracking-[0.2em] text-(--accent)">After · all arrows downward, no cycles</div>
+    <ul class="divide-y-2 divide-(--fg)">
       <li class="px-5 py-3 flex flex-wrap items-baseline gap-x-3"><span class="text-(--fg) min-w-[10rem]">Plant</span><span class="text-(--muted)">depends on</span><span class="text-(--fg)">Seat · PlantPreference · PlantOutlineHover</span><span class="ml-auto text-[10px] uppercase tracking-[0.2em] text-(--muted)">data + core only</span></li>
       <li class="px-5 py-3 flex flex-wrap items-baseline gap-x-3"><span class="text-(--fg) min-w-[10rem]">Plant</span><span class="text-(--muted)">publishes</span><span style="color:var(--accent)">OnPlantClicked · OnPlantSelected</span><span class="ml-auto text-[10px] uppercase tracking-[0.2em] text-(--muted)">no compile-time link</span></li>
       <li class="px-5 py-3 flex flex-wrap items-baseline gap-x-3"><span class="text-(--fg) min-w-[10rem]">PlantSelectionManager</span><span class="text-(--muted)">DI</span><span style="color:var(--secondary)">IPlantSelectable · ISeat · ISatisfactionSystem</span></li>
@@ -111,9 +111,9 @@ Prototype as it stands today. Every line below is a concrete dependency one clas
     </ul>
   </div>
   <div class="grid grid-cols-3 gap-3 mt-4 text-[11px]">
-    <div class="px-3 py-2 rounded border border-(--line)"><span class="text-(--fg)">solid</span> <span class="text-(--muted)">typed dep</span></div>
-    <div class="px-3 py-2 rounded border border-(--line)"><span style="color:var(--secondary)">teal</span> <span class="text-(--muted)">DI via interface</span></div>
-    <div class="px-3 py-2 rounded border border-(--line)"><span style="color:var(--accent)">amber</span> <span class="text-(--muted)">event (anonymous)</span></div>
+    <div class="px-3 py-2 border-2 border-(--fg) bg-(--bg) shadow-[2px_2px_0_0_var(--fg)]"><span class="text-(--fg)">solid</span> <span class="text-(--muted)">typed dep</span></div>
+    <div class="px-3 py-2 border-2 border-(--fg) bg-(--bg) shadow-[2px_2px_0_0_var(--fg)]"><span style="color:var(--secondary)">teal</span> <span class="text-(--muted)">DI via interface</span></div>
+    <div class="px-3 py-2 border-2 border-(--fg) bg-(--bg) shadow-[2px_2px_0_0_var(--fg)]"><span style="color:var(--accent)">amber</span> <span class="text-(--muted)">event (anonymous)</span></div>
   </div>
 </div>
 
@@ -121,12 +121,75 @@ Prototype as it stands today. Every line below is a concrete dependency one clas
 
 The numeric version of the same picture, just for the four problem children:
 
-| System                  | Ce (non-DI) depends on                                                                         | Ce now | Ce (VContainer) depends on                                     | Ce target         |
-| ----------------------- | ---------------------------------------------------------------------------------------------- | ------ | -------------------------------------------------------------- | ----------------- |
-| `Plant`                 | `Seat`, `PlantPreference`, `PlantOutlineHover`, `PlantSelectionManager`, `CustomCursorManager` | 5      | `Seat`, `PlantPreference`, `PlantOutlineHover` (via interface) | 2–3               |
-| `PlantSelectionManager` | `Plant`, `Seat`, `ScoreManager`                                                                | 3      | `IPlantSelectable`, `ISeat`, `ISatisfactionSystem`             | 3 (via interface) |
-| `SatisfactionSystem`    | `Seat`, `Plant`, `PreferenceChecker`                                                           | 3      | `IPlacementSystem`, `ICharacterSystem` (DI-injected)           | 2                 |
-| `Seat`                  | `Plant`, `PlantSelectionManager`                                                               | 2      | `Plant` (data only)                                            | 1                 |
+<div class="not-prose my-8 grid grid-cols-1 gap-5 font-mono">
+  <div class="brut p-5">
+    <div class="flex items-baseline justify-between gap-3 flex-wrap">
+      <p class="display text-xl text-(--fg)">Plant</p>
+      <span class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">target Ce 2–3</span>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4">
+      <div>
+        <p class="text-[10px] uppercase tracking-[0.2em] text-(--muted) mb-2">Before · Ce 5</p>
+        <p class="text-sm text-(--fg) leading-relaxed">Seat · PlantPreference · PlantOutlineHover · <span style="color:#d04646">PlantSelectionManager · CustomCursorManager</span></p>
+      </div>
+      <div>
+        <p class="text-[10px] uppercase tracking-[0.2em] text-(--accent) mb-2">After · Ce 3</p>
+        <p class="text-sm text-(--fg) leading-relaxed">Seat · PlantPreference · PlantOutlineHover <span class="text-(--muted)">(via interface)</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="brut p-5">
+    <div class="flex items-baseline justify-between gap-3 flex-wrap">
+      <p class="display text-xl text-(--fg)">PlantSelectionManager</p>
+      <span class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">target Ce 3 · interfaces</span>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4">
+      <div>
+        <p class="text-[10px] uppercase tracking-[0.2em] text-(--muted) mb-2">Before · Ce 3</p>
+        <p class="text-sm text-(--fg) leading-relaxed">Plant · Seat · ScoreManager</p>
+      </div>
+      <div>
+        <p class="text-[10px] uppercase tracking-[0.2em] text-(--accent) mb-2">After · Ce 3</p>
+        <p class="text-sm leading-relaxed" style="color:var(--secondary)">IPlantSelectable · ISeat · ISatisfactionSystem</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="brut p-5">
+    <div class="flex items-baseline justify-between gap-3 flex-wrap">
+      <p class="display text-xl text-(--fg)">SatisfactionSystem</p>
+      <span class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">target Ce 2</span>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4">
+      <div>
+        <p class="text-[10px] uppercase tracking-[0.2em] text-(--muted) mb-2">Before · Ce 3</p>
+        <p class="text-sm text-(--fg) leading-relaxed">Seat · Plant · PreferenceChecker</p>
+      </div>
+      <div>
+        <p class="text-[10px] uppercase tracking-[0.2em] text-(--accent) mb-2">After · Ce 2</p>
+        <p class="text-sm leading-relaxed" style="color:var(--secondary)">IPlacementSystem · ICharacterSystem <span class="text-(--muted)">(DI-injected)</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="brut p-5">
+    <div class="flex items-baseline justify-between gap-3 flex-wrap">
+      <p class="display text-xl text-(--fg)">Seat</p>
+      <span class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">target Ce 1</span>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4">
+      <div>
+        <p class="text-[10px] uppercase tracking-[0.2em] text-(--muted) mb-2">Before · Ce 2</p>
+        <p class="text-sm text-(--fg) leading-relaxed">Plant · <span style="color:#d04646">PlantSelectionManager</span></p>
+      </div>
+      <div>
+        <p class="text-[10px] uppercase tracking-[0.2em] text-(--accent) mb-2">After · Ce 1</p>
+        <p class="text-sm text-(--fg) leading-relaxed">Plant <span class="text-(--muted)">(data only)</span></p>
+      </div>
+    </div>
+  </div>
+</div>
 
 The interface trick on `PlantSelectionManager` is the one most worth highlighting. The Ce number doesn't drop, but it changes from "depends on 3 concrete classes I can't replace" to "depends on 3 interfaces I can swap or fake." Same number, different kind of coupling. Constantine's metric doesn't capture that distinction; SDP does, and the verdict column on the next measurement pass should reflect it.
 

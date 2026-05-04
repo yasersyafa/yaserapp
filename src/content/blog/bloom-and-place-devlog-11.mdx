@@ -15,12 +15,12 @@ Loose coupling has two halves. The static half is who knows whom at startup, whi
 Every system registered, with the lifetime chosen for it. Lifetime selection is most of the design work; pick it wrong and you either re-create state that should be shared, or share state that should reset.
 
 <div class="not-prose my-8 font-mono">
-  <div class="rounded-2xl border border-(--line) overflow-hidden">
-    <div class="px-5 py-3 border-b border-(--line) text-[10px] uppercase tracking-[0.2em] text-(--muted)">GameLifetimeScope · Configure(IContainerBuilder builder)</div>
-    <div class="grid sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-(--line)">
+  <div class="brut overflow-hidden">
+    <div class="px-5 py-3 border-b-2 border-(--fg) text-[10px] uppercase tracking-[0.2em] text-(--muted)">GameLifetimeScope · Configure(IContainerBuilder builder)</div>
+    <div class="grid sm:grid-cols-2 divide-y-2 sm:divide-y-0 sm:divide-x-2 divide-(--fg)">
       <div class="p-5">
         <div class="flex items-center gap-2 mb-4">
-          <span class="inline-block w-2 h-2 rounded-full" style="background:var(--accent)"></span>
+          <span class="inline-block w-3 h-3 border-2 border-(--fg)" style="background:var(--accent)"></span>
           <span class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Singleton · session-wide</span>
         </div>
         <ul class="space-y-3 text-sm">
@@ -40,7 +40,7 @@ Every system registered, with the lifetime chosen for it. Lifetime selection is 
       </div>
       <div class="p-5">
         <div class="flex items-center gap-2 mb-4">
-          <span class="inline-block w-2 h-2 rounded-full" style="background:var(--secondary)"></span>
+          <span class="inline-block w-3 h-3 border-2 border-(--fg)" style="background:var(--secondary)"></span>
           <span class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Scoped · per scene</span>
         </div>
         <ul class="space-y-3 text-sm">
@@ -98,46 +98,46 @@ Two things to flag in this snippet, because they're easy to miss:
 Seven events carry every runtime cross-system signal. Each event has exactly one publisher and one or more subscribers. No global bus.
 
 <div class="not-prose my-8 font-mono text-sm">
-  <div class="rounded-2xl border border-(--line) overflow-hidden">
-    <div class="grid grid-cols-[1fr_1fr_1fr] gap-0 px-5 py-3 border-b border-(--line) text-[10px] uppercase tracking-[0.2em] text-(--muted)">
+  <div class="brut overflow-hidden">
+    <div class="grid grid-cols-[1fr_1fr_1fr] gap-0 px-5 py-3 border-b-2 border-(--fg) bg-(--fg) text-(--bg) text-[10px] uppercase tracking-[0.2em]">
       <div>Publisher</div>
       <div>Event</div>
       <div>Subscribers</div>
     </div>
-    <ul class="divide-y divide-(--line)">
+    <ul class="divide-y-2 divide-(--fg)">
       <li class="grid grid-cols-[1fr_1fr_1fr] gap-3 px-5 py-3 items-baseline">
         <div class="text-(--fg)">Plant</div>
-        <div><span class="inline-block px-2 py-0.5 rounded-full text-[11px]" style="background:color-mix(in oklab, var(--accent) 18%, transparent); color:var(--fg)">OnPlantClicked</span></div>
+        <div><span class="inline-block px-2 py-0.5 text-[11px] border-2 border-(--fg)" style="background:var(--accent); color:var(--color-fg)">OnPlantClicked</span></div>
         <div class="text-(--fg)">PlantSelectionManager</div>
       </li>
       <li class="grid grid-cols-[1fr_1fr_1fr] gap-3 px-5 py-3 items-baseline">
         <div class="text-(--fg)">Plant</div>
-        <div><span class="inline-block px-2 py-0.5 rounded-full text-[11px]" style="background:color-mix(in oklab, var(--accent) 18%, transparent); color:var(--fg)">OnPlantSelected</span></div>
+        <div><span class="inline-block px-2 py-0.5 text-[11px] border-2 border-(--fg)" style="background:var(--accent); color:var(--color-fg)">OnPlantSelected</span></div>
         <div class="text-(--fg)">CustomCursorManager · PlantParticleEffect</div>
       </li>
       <li class="grid grid-cols-[1fr_1fr_1fr] gap-3 px-5 py-3 items-baseline">
         <div class="text-(--fg)">PlacementSystem</div>
-        <div><span class="inline-block px-2 py-0.5 rounded-full text-[11px]" style="background:color-mix(in oklab, var(--accent) 18%, transparent); color:var(--fg)">OnPlantPlaced</span></div>
+        <div><span class="inline-block px-2 py-0.5 text-[11px] border-2 border-(--fg)" style="background:var(--accent); color:var(--color-fg)">OnPlantPlaced</span></div>
         <div class="text-(--fg)">SatisfactionSystem · VisualFeedbackSystem</div>
       </li>
       <li class="grid grid-cols-[1fr_1fr_1fr] gap-3 px-5 py-3 items-baseline">
         <div class="text-(--fg)">SatisfactionSystem</div>
-        <div><span class="inline-block px-2 py-0.5 rounded-full text-[11px]" style="background:color-mix(in oklab, var(--accent) 18%, transparent); color:var(--fg)">OnPlantSatisfied</span></div>
+        <div><span class="inline-block px-2 py-0.5 text-[11px] border-2 border-(--fg)" style="background:var(--accent); color:var(--color-fg)">OnPlantSatisfied</span></div>
         <div class="text-(--fg)">VisualFeedbackSystem · LevelSystem</div>
       </li>
       <li class="grid grid-cols-[1fr_1fr_1fr] gap-3 px-5 py-3 items-baseline">
         <div class="text-(--fg)">SatisfactionSystem</div>
-        <div><span class="inline-block px-2 py-0.5 rounded-full text-[11px]" style="background:color-mix(in oklab, var(--accent) 18%, transparent); color:var(--fg)">OnPlantDissatisfied</span></div>
+        <div><span class="inline-block px-2 py-0.5 text-[11px] border-2 border-(--fg)" style="background:var(--accent); color:var(--color-fg)">OnPlantDissatisfied</span></div>
         <div class="text-(--fg)">VisualFeedbackSystem</div>
       </li>
       <li class="grid grid-cols-[1fr_1fr_1fr] gap-3 px-5 py-3 items-baseline">
         <div class="text-(--fg)">LevelSystem</div>
-        <div><span class="inline-block px-2 py-0.5 rounded-full text-[11px]" style="background:color-mix(in oklab, var(--accent) 18%, transparent); color:var(--fg)">OnLevelComplete</span></div>
+        <div><span class="inline-block px-2 py-0.5 text-[11px] border-2 border-(--fg)" style="background:var(--accent); color:var(--color-fg)">OnLevelComplete</span></div>
         <div class="text-(--fg)">UISystem · SceneManager</div>
       </li>
       <li class="grid grid-cols-[1fr_1fr_1fr] gap-3 px-5 py-3 items-baseline">
         <div class="text-(--fg)">LevelSystem</div>
-        <div><span class="inline-block px-2 py-0.5 rounded-full text-[11px]" style="background:color-mix(in oklab, var(--accent) 18%, transparent); color:var(--fg)">OnLevelFailed</span></div>
+        <div><span class="inline-block px-2 py-0.5 text-[11px] border-2 border-(--fg)" style="background:var(--accent); color:var(--color-fg)">OnLevelFailed</span></div>
         <div class="text-(--fg)">UISystem</div>
       </li>
     </ul>

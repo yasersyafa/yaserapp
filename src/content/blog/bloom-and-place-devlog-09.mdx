@@ -24,22 +24,22 @@ DI alone leaves you with chatty interfaces full of "tell me when X happens" meth
 The game itself is a casual placement puzzle: plants want specific environmental conditions, the player slots them into seats, the level resolves when every plant is satisfied. Underneath, four domain systems carry the load.
 
 <div class="not-prose my-8 grid sm:grid-cols-2 gap-3 font-mono text-sm">
-  <div class="rounded-2xl border border-(--line) p-5 hover:border-(--accent) transition-colors">
+  <div class="brut brut-hover p-5">
     <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">01</div>
     <div class="mt-2 text-base text-(--fg)">CharacterSystem</div>
     <div class="mt-2 text-xs leading-relaxed text-(--muted)">Plant data, identity, lookup.</div>
   </div>
-  <div class="rounded-2xl border border-(--line) p-5 hover:border-(--accent) transition-colors">
+  <div class="brut brut-hover p-5">
     <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">02</div>
     <div class="mt-2 text-base text-(--fg)">PlacementSystem</div>
     <div class="mt-2 text-xs leading-relaxed text-(--muted)">Placement rules, seat occupancy, valid moves.</div>
   </div>
-  <div class="rounded-2xl border border-(--line) p-5 hover:border-(--accent) transition-colors">
+  <div class="brut brut-hover p-5">
     <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">03</div>
     <div class="mt-2 text-base text-(--fg)">SatisfactionSystem</div>
     <div class="mt-2 text-xs leading-relaxed text-(--muted)">Plant-vs-seat preference scoring.</div>
   </div>
-  <div class="rounded-2xl border border-(--line) p-5 hover:border-(--accent) transition-colors">
+  <div class="brut brut-hover p-5">
     <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">04</div>
     <div class="mt-2 text-base text-(--fg)">LevelSystem</div>
     <div class="mt-2 text-xs leading-relaxed text-(--muted)">Win/lose conditions, level transitions.</div>
@@ -56,7 +56,7 @@ The five phases mapped to this thesis:
 
 <div class="not-prose my-8 font-mono text-sm">
   <ol class="space-y-0">
-    <li class="grid grid-cols-[3rem_1fr] gap-4 py-5 border-b border-(--line)">
+    <li class="grid grid-cols-[3rem_1fr] gap-4 py-5 border-b-2 border-(--fg)">
       <div class="text-2xl text-(--muted)">01</div>
       <div>
         <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Requirements Analysis</div>
@@ -64,7 +64,7 @@ The five phases mapped to this thesis:
         <div class="mt-1 text-xs text-(--muted)">→ required system list, Ca/Ce/I as the measurement standard.</div>
       </div>
     </li>
-    <li class="grid grid-cols-[3rem_1fr] gap-4 py-5 border-b border-(--line) bg-(--accent)/5 -mx-2 px-2 rounded-lg">
+    <li class="grid grid-cols-[3rem_1fr] gap-4 py-5 border-b-2 border-(--fg) bg-(--accent)/15 -mx-2 px-2">
       <div class="text-2xl text-(--accent)">02</div>
       <div>
         <div class="text-[10px] uppercase tracking-[0.2em] text-(--accent)">System Design · current phase</div>
@@ -72,7 +72,7 @@ The five phases mapped to this thesis:
         <div class="mt-1 text-xs text-(--muted)">→ dependency graph, VContainer binding scheme, event flow, interface contracts. Devlogs #10–#12 land here.</div>
       </div>
     </li>
-    <li class="grid grid-cols-[3rem_1fr] gap-4 py-5 border-b border-(--line)">
+    <li class="grid grid-cols-[3rem_1fr] gap-4 py-5 border-b-2 border-(--fg)">
       <div class="text-2xl text-(--muted)">03</div>
       <div>
         <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Implementation</div>
@@ -80,7 +80,7 @@ The five phases mapped to this thesis:
         <div class="mt-1 text-xs text-(--muted)">→ CharacterSystem, PlacementSystem, SatisfactionSystem, LevelSystem; non-DI baseline.</div>
       </div>
     </li>
-    <li class="grid grid-cols-[3rem_1fr] gap-4 py-5 border-b border-(--line)">
+    <li class="grid grid-cols-[3rem_1fr] gap-4 py-5 border-b-2 border-(--fg)">
       <div class="text-2xl text-(--muted)">04</div>
       <div>
         <div class="text-[10px] uppercase tracking-[0.2em] text-(--muted)">Testing</div>
