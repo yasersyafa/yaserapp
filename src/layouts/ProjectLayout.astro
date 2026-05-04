@@ -70,7 +70,7 @@ const jsonLd = {
       </div>
     </header>
 
-    <figure class="mt-8 sm:mt-12 overflow-hidden rounded-2xl border border-(--line) reveal">
+    <figure class="mt-8 sm:mt-12 overflow-hidden brut reveal">
       <img src={p.hero} alt={p.heroAlt} class="w-full h-auto" />
     </figure>
 
@@ -88,7 +88,7 @@ const jsonLd = {
           {p.star.result.metrics.length > 0 && (
             <dl class="mt-6 grid grid-cols-1 gap-3 sm:gap-4">
               {p.star.result.metrics.map((m) => (
-                <div class="rounded-xl border border-(--line) p-3 sm:p-4 hover:border-(--fg) transition-colors">
+                <div class="brut brut-hover p-3 sm:p-4">
                   <dt class="mono text-[10px] uppercase tracking-widest text-(--muted)">{m.label}</dt>
                   <dd class="display text-xl text-pretty text-justify mt-1 text-(--accent)">{m.value}</dd>
                 </div>
@@ -102,7 +102,7 @@ const jsonLd = {
         </div>
       </div>
 
-      <aside class="mono text-sm lg:sticky lg:top-24 lg:self-start">
+      <aside class="mono text-sm lg:sticky lg:top-24 lg:self-start brut p-5 sm:p-6">
         <h2 class="display text-2xl mb-4">Facts</h2>
         <dl class="grid grid-cols-[6rem_1fr] gap-x-4 gap-y-3 text-(--muted)">
           <dt>Role</dt><dd class="text-(--fg)">{p.role}</dd>

@@ -11,15 +11,16 @@ import { site } from '../site.config';
       Open to: collab on indie projects · contract gigs · jams.
     </p>
 
-    <div class="mt-10 sm:mt-12 reveal">
+    <div class="mt-10 sm:mt-12 reveal brut p-6 sm:p-8 bg-linear-to-br from-(--accent)/15 to-transparent">
+      <p class="mono text-[10px] uppercase tracking-[0.3em] text-(--muted) mb-3">Email</p>
       <a
         href={`mailto:${site.author.email}`}
-        class="display text-[clamp(1.5rem,7vw,3.5rem)] link inline-block magnet break-all"
+        class="display text-[clamp(0.95rem,4.6vw,2rem)] link inline-block magnet whitespace-nowrap"
         data-magnet="0.15"
       >
         {site.author.email}
       </a>
-      <div class="mt-3 flex items-center gap-3">
+      <div class="mt-4 flex items-center gap-3">
         <button type="button" id="copy-email" class="chip">copy</button>
         <span id="copy-status" class="mono text-sm text-(--accent) opacity-0 transition-opacity">copied</span>
       </div>
@@ -29,7 +30,7 @@ import { site } from '../site.config';
       <a href="/resume.pdf" class="btn btn-primary magnet" data-magnet="0.2">↓ download resume</a>
     </div>
 
-    <div class="mt-12 sm:mt-16">
+    <div class="mt-12 sm:mt-16 brut p-6 sm:p-8">
       <h2 class="mono text-[10px] sm:text-xs uppercase tracking-[0.3em] text-(--muted) mb-4 reveal">Elsewhere</h2>
       <ul class="grid grid-cols-2 sm:flex sm:flex-wrap gap-x-6 gap-y-3 stagger">
         {site.socials.map((s) => (

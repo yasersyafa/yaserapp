@@ -12,15 +12,16 @@
   --color-fg-dark: #F4ECD8;
   --color-line-dark: rgba(244, 236, 216, 0.1);
 
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  --font-display: "Departure Mono", "VT323", "Courier New", monospace;
+  --font-display: "Archivo Black", "Inter", ui-sans-serif, system-ui, sans-serif;
 
   --tracking-display: -0.02em;
-  --leading-prose: 1.7;
+  --leading-prose: 1.6;
 
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-brut: cubic-bezier(0.2, 0, 0, 1);
 }
 
 @layer base {
@@ -31,6 +32,7 @@
     --accent: var(--color-accent);
     --secondary: var(--color-secondary);
     --line: var(--color-line);
+    --shadow: var(--color-fg);
   }
 
   @media (prefers-color-scheme: dark) {
@@ -38,6 +40,7 @@
       --bg: var(--color-bg-dark);
       --fg: var(--color-fg-dark);
       --line: var(--color-line-dark);
+      --shadow: var(--color-fg-dark);
     }
   }
 
@@ -45,6 +48,7 @@
     --bg: var(--color-bg-dark);
     --fg: var(--color-fg-dark);
     --line: var(--color-line-dark);
+    --shadow: var(--color-fg-dark);
   }
 
   html {
@@ -74,6 +78,7 @@
 @layer components {
   .display {
     font-family: var(--font-display);
+    font-weight: 900;
     letter-spacing: var(--tracking-display);
     line-height: 0.95;
   }
@@ -92,11 +97,11 @@
     left: 0;
     bottom: -2px;
     width: 100%;
-    height: 1px;
+    height: 2px;
     background: currentColor;
     transform-origin: right;
     transform: scaleX(0);
-    transition: transform 380ms var(--ease-out-quart);
+    transition: transform 280ms var(--ease-brut);
   }
   .link:hover::after,
   .link:focus-visible::after {
@@ -108,17 +113,17 @@
     position: relative;
     padding: 0.25rem 0;
     color: var(--muted);
-    transition: color 240ms var(--ease-out-quart);
+    transition: color 90ms var(--ease-brut);
   }
   .nav-link::after {
     content: "";
     position: absolute;
     left: 0; right: 0; bottom: -4px;
-    height: 1px;
+    height: 2px;
     background: currentColor;
     transform: scaleX(0);
     transform-origin: right;
-    transition: transform 380ms var(--ease-out-quart);
+    transition: transform 280ms var(--ease-brut);
   }
   .nav-link:hover,
   .nav-link[aria-current="page"] { color: var(--fg); }
@@ -133,24 +138,37 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.7rem 1.25rem;
-    border-radius: 999px;
-    border: 1px solid var(--fg);
-    background: transparent;
+    border-radius: 0;
+    border: 2px solid var(--fg);
+    background: var(--bg);
     color: var(--fg);
-    font-family: var(--font-mono);
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    box-shadow: 2px 2px 0 0 var(--fg);
     transition:
-      transform 320ms var(--ease-spring),
-      background 240ms var(--ease-out-quart),
-      color 240ms var(--ease-out-quart);
-    will-change: transform;
+      transform 90ms var(--ease-brut),
+      box-shadow 90ms var(--ease-brut),
+      background 90ms var(--ease-brut),
+      color 90ms var(--ease-brut);
+    will-change: transform, box-shadow;
   }
   .btn:hover {
-    background: var(--fg);
-    color: var(--bg);
+    transform: rotate(-1.5deg) translate(-1px, -1px);
+    box-shadow: 4px 4px 0 0 var(--fg);
+    background: var(--accent);
+    color: var(--color-fg);
   }
-  .btn:active { transform: scale(0.97); }
+  .btn:active {
+    transform: translate(2px, 2px) rotate(0deg);
+    box-shadow: 0 0 0 0 var(--fg);
+  }
+  .btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
 
   .btn-primary {
     background: var(--fg);
@@ -159,56 +177,69 @@
   .btn-primary:hover {
     background: var(--accent);
     color: var(--color-fg);
-    border-color: var(--accent);
+    border-color: var(--fg);
   }
 
   .chip {
     display: inline-block;
-    padding: 0.2rem 0.6rem;
-    border-radius: 999px;
-    border: 1px solid var(--line);
+    padding: 0.2rem 0.55rem;
+    border-radius: 0;
+    border: 2px solid var(--fg);
+    background: var(--bg);
+    box-shadow: 2px 2px 0 0 var(--fg);
     font-family: var(--font-mono);
     font-size: 0.7rem;
-    color: var(--muted);
-    transition: all 240ms var(--ease-out-quart);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fg);
+    transition:
+      transform 90ms var(--ease-brut),
+      box-shadow 90ms var(--ease-brut),
+      background 90ms var(--ease-brut);
   }
   .chip:hover {
-    color: var(--fg);
-    border-color: var(--fg);
+    background: var(--accent);
+    color: var(--color-fg);
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 0 var(--fg);
   }
 
-  .rule { border: 0; border-top: 1px solid var(--line); margin: 1.5rem 0; }
+  .rule { border: 0; border-top: 2px solid var(--fg); margin: 1.5rem 0; }
 
   .card {
     position: relative;
     overflow: hidden;
-    border-radius: 1.25rem;
-    border: 1px solid var(--line);
+    border-radius: 0;
+    border: 2px solid var(--fg);
     background: var(--bg);
+    box-shadow: 2px 2px 0 0 var(--fg);
     transition:
-      transform 480ms var(--ease-out-quart),
-      border-color 240ms ease,
-      box-shadow 480ms var(--ease-out-quart);
-    will-change: transform;
+      transform 90ms var(--ease-brut),
+      box-shadow 90ms var(--ease-brut);
+    will-change: transform, box-shadow;
   }
   .card:hover {
-    transform: translateY(-6px);
-    border-color: var(--fg);
-    box-shadow: 0 24px 48px -24px rgba(10, 10, 10, 0.18);
+    transform: rotate(-1.5deg) translate(-1px, -1px);
+    box-shadow: 4px 4px 0 0 var(--fg);
+  }
+  .card:active {
+    transform: translate(2px, 2px) rotate(0deg);
+    box-shadow: 0 0 0 0 var(--fg);
   }
   .card-media {
     aspect-ratio: 16 / 10;
     overflow: hidden;
-    background: var(--line);
+    background: var(--accent);
+    border-bottom: 2px solid var(--fg);
   }
   .card-media img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 800ms var(--ease-out-quart);
+    transition: transform 600ms var(--ease-out-quart);
     will-change: transform;
   }
-  .card:hover .card-media img { transform: scale(1.06); }
+  .card:hover .card-media img { transform: scale(1.04); }
 
   .reveal {
     opacity: 0;
@@ -238,6 +269,30 @@
   .stagger.in > *:nth-child(6) { transition-delay: 300ms; }
 
   .magnet { transition: transform 240ms var(--ease-out-quart); will-change: transform; }
+
+  .brut {
+    border-radius: 0;
+    border: 2px solid var(--fg);
+    background: var(--bg);
+    box-shadow: 4px 4px 0 0 var(--fg);
+    transition:
+      transform 90ms var(--ease-brut),
+      box-shadow 90ms var(--ease-brut),
+      background 90ms var(--ease-brut);
+  }
+  .brut-hover:hover {
+    transform: rotate(-1.5deg) translate(-1px, -1px);
+    box-shadow: 6px 6px 0 0 var(--fg);
+  }
+  .brut-hover:active {
+    transform: translate(2px, 2px) rotate(0deg);
+    box-shadow: 0 0 0 0 var(--fg);
+  }
+
+  .brut-accent {
+    background: var(--accent);
+    color: var(--color-fg);
+  }
 }
 
 #cursor-dot,
@@ -312,15 +367,15 @@
 #cursor-ring.press .ring-svg { transform: scale(0.85); }
 
 #cursor-label {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--accent);
   background: color-mix(in oklab, var(--bg) 75%, transparent);
   padding: 4px 8px;
-  border: 1px solid var(--accent);
-  border-radius: 9999px;
+  border: 2px solid var(--accent);
+  border-radius: 0;
   white-space: nowrap;
   opacity: 0;
   mix-blend-mode: normal;
@@ -332,7 +387,7 @@
 
 .cursor-trail-dot {
   width: 6px; height: 6px;
-  border-radius: 9999px;
+  border-radius: 0;
   background: #fff;
   transition: opacity 240ms ease;
 }
@@ -375,7 +430,7 @@ body {
   overflow-x: auto;
   overflow-y: hidden;
   margin: 1.5rem 0;
-  border-radius: 0.75rem;
+  border: 2px solid var(--fg);
   -webkit-overflow-scrolling: touch;
 }
 .table-wrap > table {
