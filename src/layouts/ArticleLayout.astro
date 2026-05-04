@@ -67,15 +67,15 @@ const jsonLd = {
     </div>
 
     {(prev || next) && (
-      <nav class="mt-16 sm:mt-20 pt-8 border-t border-(--line) grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <nav class="mt-16 sm:mt-20 pt-8 border-t-2 border-(--fg) grid grid-cols-1 sm:grid-cols-2 gap-5">
         {prev ? (
-          <a href={`/blog/${prev.id}/`} class="group rounded-2xl border border-(--line) p-5 hover:border-(--accent) transition-colors">
+          <a href={`/blog/${prev.id}/`} class="group brut brut-hover p-5">
             <div class="mono text-[10px] uppercase tracking-[0.2em] text-(--muted)">← previous</div>
             <div class="mt-2 text-pretty text-(--fg) group-hover:text-(--accent) transition-colors">{prev.title}</div>
           </a>
         ) : <div class="hidden sm:block" />}
         {next ? (
-          <a href={`/blog/${next.id}/`} class="group rounded-2xl border border-(--line) p-5 hover:border-(--accent) transition-colors text-right">
+          <a href={`/blog/${next.id}/`} class="group brut brut-hover p-5 text-right">
             <div class="mono text-[10px] uppercase tracking-[0.2em] text-(--muted)">next →</div>
             <div class="mt-2 text-pretty text-(--fg) group-hover:text-(--accent) transition-colors">{next.title}</div>
           </a>
