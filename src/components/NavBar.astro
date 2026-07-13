@@ -5,8 +5,8 @@ const { current } = Astro.props as { current?: string };
 
 <header class="sticky top-0 z-40 backdrop-blur-md bg-[var(--bg)]/70 border-b border-[var(--line)]">
   <nav class="max-w-6xl mx-auto px-5 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-4">
-    <a href="/" class="display text-lg tracking-tight magnet" data-magnet="0.15" data-nav-link>
-      yaser<span class="text-[var(--accent)]">.</span>
+    <a href="/" class="masthead text-2xl sm:text-3xl magnet" data-magnet="0.15" data-nav-link>
+      Yaser<span class="text-[var(--accent)]">.</span>
     </a>
 
     <ul class="hidden sm:flex items-center gap-5 mono text-sm">
@@ -35,7 +35,7 @@ const { current } = Astro.props as { current?: string };
 <button
   type="button"
   id="nav-toggle"
-  class="sm:hidden fixed top-3 right-3 z-[120] w-11 h-11 grid place-items-center bg-[var(--bg)] border-2 border-[var(--fg)] text-[var(--fg)] shadow-[2px_2px_0_0_var(--fg)]"
+  class="sm:hidden fixed top-3 right-3 z-[120] w-11 h-11 grid place-items-center bg-[var(--bg)] border border-[var(--fg)] text-[var(--fg)]"
   aria-label="Open menu"
   aria-expanded="false"
   aria-controls="nav-panel"
