@@ -1,55 +1,67 @@
 ---
 title: "Bloom & Place devlog #1: why I'm building it"
-dek: My final-year project is a casual puzzle game, but the real subject is loosely coupled architecture in Unity. Here's the pain that started it.
+dek: My final-year project looks like a casual puzzle game, but the real subject is how the parts of an app talk to each other. Turns out that works a lot like how people do, and you can actually put a number on it.
 date: 2026-05-02
 tags: [unity, architecture, dependency-injection]
 readingTime: 6
 ---
 
-## The internship that broke my codebase brain
+## Software engineering is just everyday life
 
-I spent a chunk of the last year on a game studio internship. The game shipped, but the codebase shipped a different message. Every system knew about every other system. Touch one and three more break. Add a feature and watch unrelated ones regress. Read a stack trace and follow it through five `Manager.Instance` hops before you find the line that actually matters.
+People act like software engineering is some sealed-off wizard thing. Most of it isn't. As a concept, it runs on the same rules as normal human life.
 
-Release dates slipped. Not because the game design was hard, but because the architecture made every change quadratically expensive.
+Here is the whole idea. An app is not one big blob. It is a bunch of smaller systems, and those systems spend all day talking to each other. A scoring system, an input system, a system that decides where a plant is allowed to go. Each one does its own job and then has to tell the others what happened.
 
-That experience is what this final-year project is really about. The game on top is **Bloom & Place**, a casual puzzle where you place plants according to their environmental preferences. The game is the vehicle. The subject is what holds it together underneath.
+So the real question in any app is not "is the code clever." It is "do these systems communicate well." And that is a human question. I think a person's relationships are only as good as the way they communicate. Two people who talk clearly and stay out of each other's business tend to be fine. Two people who have to know every detail of each other's lives to get through the day tend to fall apart. Systems are exactly the same.
 
-## The thing with a name: tight coupling
+That is what this final-year project is really about. On top it is **Bloom & Place**, a casual puzzle where you place plants according to what environment each one likes. That game is the vehicle. The subject underneath is getting the systems to communicate like adults.
 
-Tight coupling is when one system depends directly on the implementation details of another. Larry Constantine named it in the late 60s as part of structured design, alongside cohesion, as metrics for software you actually want to maintain. Sixty years later, Unity codebases keep rediscovering it the hard way.
+## How systems actually talk to each other
 
-The Unity-specific failure mode goes like this. You need system A to talk to system B, you reach for the closest tool, you make B a singleton, and you call `B.Instance.DoThing()` from A. It works. You ship. You do it again. And again. Six months in, every system can call every other system from anywhere, and the call graph is a fully connected mess.
+Say system A needs something from system B. There are two ways it can go about it.
 
-Singletons aren't the disease. They're the painkiller you take so you don't have to think about the disease. The disease is that you never decided how systems are supposed to find each other.
+The first way: A grabs B directly, reaches inside it, and pokes at its guts. A has to know how B works to use it at all. This is the coworker who cannot ask you to send a file without first learning your entire filing system, your passwords, and how your day is going. It works right up until B changes anything, and then A breaks too.
 
-## What I want instead
+The second way: A does not touch B at all. A just announces "hey, this happened" out loud, and whoever cares reacts. A does not even know who is listening. This is a healthy team. You ask a coworker for a finished report. You do not need to know how they made it, what tools they used, or what their morning was like. You know what you can ask for, and that is it. That "what you can ask for" is the whole agreement between you.
 
-The plan for Bloom & Place is to combine two ideas that should already be standard but aren't, at least not in indie or academic Unity work:
+Family gives you the warning version of this. Think about the one person in a household everyone calls for absolutely everything. Where are the keys, who is picking up the kids, how does the router work, ask them. For a while it holds. Then that person burns out or leaves for a weekend and the whole house stops functioning, because nobody built any other way to get things done. In software that person has a name too, and I will get to it.
 
-1. **Dependency Injection via VContainer.** Plain C# classes as entry points, not MonoBehaviours. Logic separated from view. Lifetime managed by a container, not by `FindObjectOfType` and prayer.
-2. **C# events as the event bus.** No global broadcast singleton. Systems publish events, other systems subscribe, and neither side needs to know the other exists.
+So the goal is simple to say and hard to do: I want the systems in Bloom & Place to talk like the healthy team, not like the coworker who needs your passwords.
 
-I picked VContainer because it's fast (5–10x resolution speed over Extenject in the public benchmarks, zero-GC during resolution) and because it doesn't force MonoBehaviour inheritance on things that have no business being scene objects.
+## The unhealthy pattern has a name: tight coupling
 
-## Measuring it, not vibing it
+The bad version is called tight coupling. It is when one system depends on the private, inner details of another one. The relationship where you cannot function unless you know everything about the other person.
 
-The part I care about most is that the architecture claim has to be falsifiable. "Cleaner code" is a vibe. Coupling is a number.
+This is not a new complaint. Larry Constantine named it back in the late 60s, as part of structured design, right next to cohesion, as a way to measure software you can actually live with. Sixty years later, projects keep rediscovering it the hard way. Mine did.
 
-I'm using Efferent Coupling (Ce) and Afferent Coupling (Ca) as the headline metrics. Ce counts how many things a module depends on. Ca counts how many things depend on it. They're old (Robert Martin, 90s), boring, and well understood, which is exactly why they're the right tool. If the loosely coupled version of Bloom & Place doesn't show meaningfully lower Ce/Ca than a naive Singleton-everywhere baseline, I want to know.
+I lived this on a game studio internship last year. The game shipped fine. The codebase shipped a warning. Every system knew about every other system. Touch one and three more break. Add a feature and watch unrelated ones regress. Read an error trace and chase it through five middlemen before you reach the line that actually matters. Release dates slipped, not because the design was hard, but because every small change had gotten quadratically expensive.
 
-That also means I have to actually build the bad version, or at least an honest stand-in for it. I'd rather get punched in the face by my own data than write a thesis where the conclusion was decided in chapter 1.
+That whole mess usually grows out of one shortcut: making a single global object that anyone can reach from anywhere, so systems stop bothering to introduce themselves properly. That object is the family member everyone calls for everything. It is not the disease. It is the painkiller you take so you do not have to think about the disease. The disease is that nobody ever decided how systems are supposed to find each other in the first place.
 
-## What "done" looks like for devlog #1
+## Good communication is measurable, not a vibe
 
-I'm setting expectations for myself, on record, before I write any gameplay code:
+Here is the part I care about most. I do not want to end this project going "trust me, the new version feels cleaner." Feelings are not evidence. "Cleaner code" is a vibe. Coupling is a number.
 
-- VContainer is the only way systems get hold of each other. No `FindObjectOfType`, no static `Instance` getters in production code.
-- Domain logic (placement rules, plant compatibility, scoring) lives in plain C# classes. MonoBehaviours are view and input only.
-- Cross-system communication is C# events, exposed via interfaces, wired by the container.
-- Every gameplay system has at least one isolated unit test, no scene required.
+And it really is countable. There are four numbers I lean on, and none of them need a math degree. Robert Martin popularized them in the 90s. Think of each system as a person, and their dependencies as the people they rely on.
 
-If I find myself reaching for a singleton "just for now," I'm writing the devlog post about why I caved before I commit the code.
+**Ce, how many people you lean on.** Its real name is Efferent Coupling. It counts how many other systems this one depends on to do its job. High Ce is the person who cannot make breakfast without texting four people first. The more you lean on, the more ways your morning can go wrong.
+
+**Ca, how many people lean on you.** Its real name is Afferent Coupling. It counts how many other systems depend on this one. High Ca is the person the whole office relies on. That is not automatically bad, but it does mean every time they change, a lot of people feel it.
+
+**The Instability Index, are you steady or shaky.** This one has a tiny formula:
+
+```
+I = Ce / (Ce + Ca)
+```
+
+It gives a score from 0 to 1. Near 0 means rock solid: lots of people lean on you, and you barely lean on anyone. That is the dependable family anchor. Near 1 means shaky: you need everyone, and nobody really needs you. Neither extreme is "wrong" on its own, but the score tells you honestly what kind of citizen each system is.
+
+**SDP violations, leaning the wrong way.** SDP is the Stable Dependencies Principle, and it is basically common sense: you should only lean on people steadier than you. You build your life around the reliable friend, not the one who vanishes every weekend. A violation is when a steady system depends on a shaky one. Picture the family anchor everyone trusts secretly relying on the flaky cousin who disappears without warning. The day the cousin flakes, the anchor wobbles, and everyone leaning on the anchor wobbles with them. That domino line is the exact thing I most want to drive to zero.
+
+Put together, these four turn a fuzzy feeling into a scoreboard. Which also means I have to play fair and actually build the messy version too, then measure both. No stacking the deck. I would rather get punched in the face by my own data than write a thesis where the conclusion was already decided in chapter one.
 
 ## Next
 
-Devlog #2 is the baseline measurement: the actual Ce/Ca/I numbers from the prototype as it stands today, including the line of code I'm most embarrassed by. Before fixing anything, I want the "before" picture pinned down so the refactor has a real target to hit.
+So that is devlog #1's whole job: name the problem (coupling) and pick the ruler (Ce, Ca, Instability, SDP violations). No solutions yet, on purpose.
+
+Devlog #2 is the baseline. I take the messy prototype exactly as it stands today and read those four numbers off it, including the line of code I am most embarrassed by. You cannot prove you cleaned anything up without an honest "before" picture first. The fixes start after that.

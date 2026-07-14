@@ -3,10 +3,10 @@ import { site } from '../site.config';
 const { current } = Astro.props as { current?: string };
 ---
 
-<header class="sticky top-0 z-40 backdrop-blur-md bg-[var(--bg)]/70 border-b border-[var(--line)]">
+<header class="sticky top-0 z-40 backdrop-blur-md bg-(--bg)/70 border-b border-(--line)">
   <nav class="max-w-6xl mx-auto px-5 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-4">
-    <a href="/" class="masthead text-2xl sm:text-3xl magnet" data-magnet="0.15" data-nav-link>
-      Yaser<span class="text-[var(--accent)]">.</span>
+    <a href="/" class="text-2xl sm:text-3xl magnet" data-magnet="0.15" data-nav-link>
+      yaser<span class="text-(--accent)">.</span>
     </a>
 
     <ul class="hidden sm:flex items-center gap-5 mono text-sm">
@@ -35,21 +35,21 @@ const { current } = Astro.props as { current?: string };
 <button
   type="button"
   id="nav-toggle"
-  class="sm:hidden fixed top-3 right-3 z-[120] w-11 h-11 grid place-items-center bg-[var(--bg)] border border-[var(--fg)] text-[var(--fg)]"
+  class="sm:hidden fixed top-3 right-3 z-120 w-11 h-11 grid place-items-center bg-(--bg) border border-(--fg) text-(--fg)"
   aria-label="Open menu"
   aria-expanded="false"
   aria-controls="nav-panel"
 >
-  <span class="block relative w-6 h-[18px]">
-    <span class="absolute left-0 top-0 w-full h-[2px] bg-current origin-center transition-transform duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] [.is-open_&]:translate-y-2 [.is-open_&]:rotate-45"></span>
-    <span class="absolute left-0 top-2 w-full h-[2px] bg-current transition-opacity duration-200 [.is-open_&]:opacity-0"></span>
-    <span class="absolute left-0 bottom-0 w-full h-[2px] bg-current origin-center transition-transform duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] [.is-open_&]:-translate-y-2 [.is-open_&]:-rotate-45"></span>
+  <span class="block relative w-6 h-4.5">
+    <span class="absolute left-0 top-0 w-full h-0.5 bg-current origin-center transition-transform duration-300 ease-out-quart in-[.is-open]:translate-y-2 in-[.is-open]:rotate-45"></span>
+    <span class="absolute left-0 top-2 w-full h-0.5 bg-current transition-opacity duration-200 in-[.is-open]:opacity-0"></span>
+    <span class="absolute left-0 bottom-0 w-full h-0.5 bg-current origin-center transition-transform duration-300 ease-out-quart in-[.is-open]:-translate-y-2 in-[.is-open]:-rotate-45"></span>
   </span>
 </button>
 
 <div
   id="nav-panel"
-  class="sm:hidden fixed inset-0 z-[110] bg-[var(--bg)] text-[var(--fg)] isolate pointer-events-none opacity-0 transition-opacity duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] [.is-open_&]:opacity-100 [.is-open_&]:pointer-events-auto"
+  class="sm:hidden fixed inset-0 z-110 bg-(--bg) text-(--fg) isolate pointer-events-none opacity-0 transition-opacity duration-300 ease-out-quart in-[.is-open]:opacity-100 in-[.is-open]:pointer-events-auto"
   aria-hidden="true"
   inert
 >
@@ -57,12 +57,12 @@ const { current } = Astro.props as { current?: string };
     <ul class="flex flex-col gap-2">
       {site.nav.map((item, i) => (
         <li
-          class="opacity-0 translate-y-4 transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] [.is-open_&]:opacity-100 [.is-open_&]:translate-y-0"
+          class="opacity-0 translate-y-4 transition-all duration-500 ease-out-quart in-[.is-open]:opacity-100 in-[.is-open]:translate-y-0"
           style={`transition-delay: ${100 + i * 60}ms`}
         >
           <a
             href={item.href}
-            class="display text-5xl block py-2 hover:text-[var(--accent)] transition-colors"
+            class="display text-5xl block py-2 hover:text-(--accent) transition-colors"
             aria-current={current === item.label ? 'page' : undefined}
             data-nav-link
           >
@@ -72,7 +72,7 @@ const { current } = Astro.props as { current?: string };
       ))}
     </ul>
 
-    <div class="mt-auto pt-10 border-t border-[var(--line)] flex items-center justify-between mono text-sm text-[var(--muted)]">
+    <div class="mt-auto pt-10 border-t border-(--line) flex items-center justify-between mono text-sm text-(--muted)">
       <button type="button" data-theme-toggle class="link" aria-label="Toggle theme">
         theme: <span data-theme-icon>auto</span>
       </button>
